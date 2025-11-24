@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meoto-Log（メオトログ）</title>
+    <style>
+        /* --- ベーススタイル（明るくカジュアルな雰囲気） --- */
+        :root {
+            --primary-color: #4A90E2; /* 知的な青 */
+            --accent-color: #FF9F43;  /* 元気なオレンジ */
+            --bg-color: #F4F7F6;
+            --text-color: #333;
+            --white: #ffffff;
+            --danger-color: #EE5253;
+            --safe-color: #1DD1A1;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* ナビゲーション分 */
+        }
+
+        /* --- ヘッダー --- */
+        header {
+            background-color: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+        .user-icon {
+            width: 35px;
+            height: 35px;
+            background-color: #ddd;
+            border-radius: 50%;
+        }
+
+        /* --- メインステータス（数値化・可視化エリア） --- */
+        .status-card {
+            background: linear-gradient(135deg, var(--primary-color), #64b3f4);
+            color: var(--white);
+            margin: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+            text-align: center;
+        }
+        .status-title {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .status-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .status-meter {
+            margin-top: 10px;
+            background: rgba(255,255,255,0.3);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .status-bar {
+            background: var(--accent-color);
+            height: 100%;
+            width: 80%; /* 仮の数値 */
+        }
+        .status-message {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* --- 本日の予定（カレンダー要素） --- */
+        .section-title {
+            padding: 0 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .schedule-list {
+            margin: 0 20px 20px 20px;
+        }
+        .schedule-item {
+            background-color: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            border-left: 5px solid var(--primary-color);
+        }
+        .time {
+            font-weight: bold;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        /* --- 直近のAIログ（振り返り） --- */
+        .log-card {
+            background-color: var(--white);
+            margin: 0 20px 10px 20px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        .danger-badge {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+        .log-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* --- フローティングアクションボタン（相談ボタン） --- */
+        .fab-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: var(--white);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 10px rgba(255, 159, 67, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 100;
+        }
+        .fab-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* --- ボトムナビゲーション --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            z-index: 90;
+        }
+        .nav-item {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #888;
+            cursor: pointer;
+        }
+        .nav-icon {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        /* --- モーダル（AI相談画面・ダミー） --- */
+        .modal-overlay {
+            display: none; /* 初期状態は非表示 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .modal-content {
+            background-color: var(--white);
+            width: 100%;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+        .send-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .ai-response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #E3F2FD;
+            border-radius: 10px;
+            display: none; /* 最初は隠す */
+        }
+        .ai-score {
+            font-weight: bold;
+            color: var(--danger-color);
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header>
+        <div class="logo">Meoto-Log</div>
+        <div class="user-icon"></div>
+    </header>
+
+    <!-- メインステータス（数値化エリア） -->
+    <div class="status-card">
+        <div class="status-title">今の関係性スコア</div>
+        <div class="status-score">65点 / 100点</div>
+        <div class="status-meter">
+            <div class="status-bar"></div>
+        </div>
+        <div class="status-message">⚠️ 少し会話不足かも？帰りにスイーツを買おう！</div>
+    </div>
+
+    <!-- 本日の予定（カレンダー簡易表示） -->
+    <div class="section-title">本日の予定</div>
+    <div class="schedule-list">
+        <div class="schedule-item">
+            <span class="time">19:00</span>
+            <span>退社予定（残業なしで帰る！）</span>
+        </div>
+        <div class="schedule-item">
+            <span class="time">20:00</span>
+            <span>娘のお風呂担当</span>
+        </div>
+    </div>
+
+    <!-- 直近のAIログ -->
+    <div class="section-title">直近の振り返り</div>
+    <div class="log-card">
+        <div class="log-header">
+            <span>昨日 22:30</span>
+            <span class="danger-badge">危険度: ★★★★</span>
+        </div>
+        <div class="log-text">
+            自分：「飯まだ？」<br>
+            AI：「危険です！『お腹空いたね、何か手伝おうか？』と言い換えましょう。」
+        </div>
+    </div>
+
+    <!-- 相談ボタン（FAB） -->
+    <div class="fab-btn" onclick="openModal()">＋</div>
+
+    <!-- ボトムナビゲーション -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <span class="nav-icon">🏠</span>ホーム
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">📅</span>予定
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">📊</span>ログ
+        </div>
+    </div>
+
+    <!-- モーダル（相談画面） -->
+    <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>AIに相談する</h3>
+            <p>今の状況や、言いたいことを短く入力してください</p>
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="例：妻が不機嫌で...">
+                <button class="send-btn" onclick="simulateAI()">送信</button>
+            </div>
+
+            <!-- AIの返信表示エリア -->
+            <div class="ai-response" id="aiResponse">
+                <div class="ai-score">危険度判定：★★★★☆ (80%)</div>
+                <p>その発言は「私の大変さをわかってない」と受け取られる可能性があります。<br><br>
+                <strong>💡 模範解答：</strong><br>
+                「今日もお疲れ様。赤ちゃん泣いてて大変だったね。何か飲み物でも入れようか？」
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // モーダルを開く
+        function openModal() {
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('aiResponse').style.display = 'none'; // リセット
+            document.getElementById('userInput').value = ''; // リセット
+        }
+
+        // モーダルを閉じる
+        function closeModal(event) {
+            if (event.target === document.getElementById('modal')) {
+                document.getElementById('modal').style.display = 'none';
+            }
+        }
+
+        // AI相談のシミュレーション（デモ用）
+        function simulateAI() {
+            const input = document.getElementById('userInput').value;
+            if (!input) return alert("内容を入力してください");
+
+            // 送信ボタンを押した雰囲気だけ出す（実際は即表示）
+            const responseArea = document.getElementById('aiResponse');
+            responseArea.style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
