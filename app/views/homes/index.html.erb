@@ -258,13 +258,44 @@
 
     <!-- メインステータス（数値化エリア） -->
     <div class="status-card">
-        <div class="status-title">今の関係性スコア</div>
-        <div class="status-score">65点 / 100点</div>
+      <div class="status-title">現在の妻のHP</div>
+      
+      <% if @latest_status.present? %>
+        <!-- データがある場合 -->
+        <div class="status-score"><%= @latest_status.hp_percentage %>%</div>
+        <div class="status-message">機嫌：<%= @latest_status.mood.name %></div>
+        
+        <!-- HPバーの長さを動的に変える（style属性を使う） -->
         <div class="status-meter">
-            <div class="status-bar"></div>
+          <div class="status-bar" style="width: <%= @latest_status.hp_percentage %>%;"></div>
         </div>
-        <div class="status-message">⚠️ 少し会話不足かも？帰りにスイーツを買おう！</div>
+      <% else %>
+        <!-- データがまだない場合 -->
+        <div class="status-score">-- %</div>
+        <div class="status-message">まずはHPを記録しましょう！</div>
+      <% end %>
     </div>
+
+    <!-- HP更新フォーム（仮設置） -->
+    <% if user_signed_in? %>
+      <div style="margin: 20px; padding: 20px; background: white; border-radius: 10px;">
+        <h3>妻のHPを更新する</h3>
+        <%= form_with model: @partner_status, local: true do |f| %>
+          
+          <div style="margin-bottom: 10px;">
+            <label>HP (0-100):</label>
+            <%= f.number_field :hp_percentage, in: 0..100, step: 10, style: "padding: 5px;" %>
+          </div>
+
+          <div style="margin-bottom: 10px;">
+            <label>機嫌:</label>
+            <%= f.collection_select :mood_id, Mood.all, :id, :name, {}, {style: "padding: 5px;"} %>
+          </div>
+
+          <%= f.submit "更新する", class: "send-btn", style: "background-color: var(--accent-color);" %>
+        <% end %>
+      </div>
+    <% end %>
 
     <!-- 本日の予定（カレンダー簡易表示） -->
     <div class="section-title">本日の予定</div>
