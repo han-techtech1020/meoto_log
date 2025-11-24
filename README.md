@@ -1,24 +1,33 @@
-# README
+erDiagram
+    Users ||--o{ Consultations : "相談する"
+    Users ||--o{ Partner_Statuses : "記録する"
+    Users ||--o{ Schedules : "登録する"
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+    Users {
+        integer id PK
+        string nickname "ニックネーム"
+        string email "メールアドレス"
+        string password "パスワード"
+    }
 
-Things you may want to cover:
+    Consultations {
+        integer id PK
+        text content "相談内容"
+        text ai_response "AIの回答"
+        integer risk_score "危険度スコア"
+        references user_id FK
+    }
 
-* Ruby version
+    Partner_Statuses {
+        integer id PK
+        integer hp_percentage "妻のHP(%)"
+        integer mood_id "機嫌(ActiveHash)"
+        references user_id FK
+    }
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+    Schedules {
+        integer id PK
+        string title "予定タイトル"
+        datetime start_time "開始日時"
+        references user_id FK
+    }
