@@ -73,3 +73,7 @@ group :production do
 end
 
 gem 'active_hash'
+
+gem 'ruby-openai'
+
+gem 'dotenv-rails', groups: [:development, :test]
