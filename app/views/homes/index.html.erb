@@ -380,9 +380,47 @@
             const input = document.getElementById('userInput').value;
             if (!input) return alert("内容を入力してください");
 
-            // 送信ボタンを押した雰囲気だけ出す（実際は即表示）
-            const responseArea = document.getElementById('aiResponse');
-            responseArea.style.display = 'block';
+            // 送信ボタンを一時的に無効化（連打防止）
+            const sendBtn = document.querySelector('.send-btn');
+            sendBtn.disabled = true;
+            sendBtn.innerText = '通信中...';
+
+            // Railsのコントローラーにデータを送る（fetch）
+            fetch('/consultations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Railsのセキュリティトークンを送るおまじない
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ content: input })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // AIからの返信を表示エリアにセット
+                const responseArea = document.getElementById('aiResponse');
+                const scoreArea = responseArea.querySelector('.ai-score');
+                const textArea = responseArea.querySelector('p');
+
+                // スコアとテキストを書き換え
+                scoreArea.innerText = `危険度判定：${data.risk_score}%`;
+                textArea.innerHTML = `
+                    <strong>💡 アドバイス：</strong><br>${data.advice}<br><br>
+                    <strong>🗣 模範解答：</strong><br>${data.ai_response}
+                `;
+
+                // 表示する
+                responseArea.style.display = 'block';
+            })
+            .catch(error => {
+                alert('エラーが発生しました。もう一度お試しください。');
+                console.error(error);
+            })
+            .finally(() => {
+                // ボタンを元に戻す
+                sendBtn.disabled = false;
+                sendBtn.innerText = '送信';
+            });
         }
     </script>
 
