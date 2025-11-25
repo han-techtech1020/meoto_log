@@ -292,29 +292,51 @@
     <% end %>
 
     <!-- 本日の予定（カレンダー簡易表示） -->
-    <div class="section-title">本日の予定</div>
-    <div class="schedule-list">
-        <div class="schedule-item">
-            <span class="time">19:00</span>
-            <span>退社予定（残業なしで帰る！）</span>
+    <div class="px-4 font-bold text-gray-500 mb-2 mt-6">本日の予定</div>
+    <div class="mx-4 mb-6">
+      <% if @today_schedules.present? %>
+        <% @today_schedules.each do |schedule| %>
+          <div class="bg-white p-4 rounded-lg mb-2 flex items-center border-l-4 border-indigo-500 shadow-sm">
+            <span class="font-bold mr-4 text-indigo-600">
+              <%= schedule.start_time.strftime("%H:%M") %>
+            </span>
+            <span class="text-gray-800"><%= schedule.title %></span>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="bg-gray-100 p-4 rounded-lg text-center text-gray-400 text-sm">
+          今日の予定はありません
         </div>
-        <div class="schedule-item">
-            <span class="time">20:00</span>
-            <span>娘のお風呂担当</span>
-        </div>
+      <% end %>
     </div>
 
     <!-- 直近のAIログ -->
-    <div class="section-title">直近の振り返り</div>
-    <div class="log-card">
-        <div class="log-header">
-            <span>昨日 22:30</span>
-            <span class="danger-badge">危険度: ★★★★</span>
+    <div class="px-4 font-bold text-gray-500 mb-2">直近の振り返り</div>
+    <div class="mx-4 mb-20"> <!-- ボトムナビと被らないよう余白多めに -->
+      <% if @latest_consultation.present? %>
+        <%= link_to consultation_path(@latest_consultation), class: "block bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition border border-gray-100" do %>
+          <div class="flex justify-between text-xs text-gray-500 mb-1">
+            <span><%= @latest_consultation.created_at.strftime("%m/%d %H:%M") %></span>
+            
+            <!-- ご機嫌度スコアで色を変える -->
+            <% color = @latest_consultation.risk_score > 70 ? 'text-red-500' : (@latest_consultation.risk_score > 30 ? 'text-yellow-500' : 'text-blue-500') %>
+            <span class="font-bold <%= color %>">
+              ご機嫌度: <%= @latest_consultation.risk_score %>%
+            </span>
+          </div>
+          
+          <div class="text-sm text-gray-800 mb-2 font-medium truncate">
+            自分：<%= @latest_consultation.content %>
+          </div>
+          <div class="text-xs text-gray-600 bg-gray-50 p-2 rounded line-clamp-2">
+            AI：<%= @latest_consultation.ai_response %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="bg-gray-100 p-4 rounded-lg text-center text-gray-400 text-sm">
+          まだ履歴がありません。<br>下のボタンから相談してみましょう！
         </div>
-        <div class="log-text">
-            自分：「飯まだ？」<br>
-            AI：「危険です！『お腹空いたね、何か手伝おうか？』と言い換えましょう。」
-        </div>
+      <% end %>
     </div>
 
     <!-- モーダル（相談画面） -->
