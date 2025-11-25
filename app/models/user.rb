@@ -6,4 +6,5 @@ class User < ApplicationRecord
 
   has_many :partner_statuses
   has_many :consultations
+  has_many :schedules
 end

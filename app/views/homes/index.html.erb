@@ -250,12 +250,6 @@
 </head>
 <body>
 
-    <!-- ヘッダー -->
-    <header>
-        <div class="logo">Meoto-Log</div>
-        <div class="user-icon"></div>
-    </header>
-
     <!-- メインステータス（数値化エリア） -->
     <div class="status-card">
       <div class="status-title">現在の妻のHP</div>
@@ -297,46 +291,66 @@
       </div>
     <% end %>
 
-    <!-- 本日の予定（カレンダー簡易表示） -->
-    <div class="section-title">本日の予定</div>
-    <div class="schedule-list">
-        <div class="schedule-item">
-            <span class="time">19:00</span>
-            <span>退社予定（残業なしで帰る！）</span>
+    <!-- 本日の予定 -->
+    <div class="flex justify-between items-center px-4 mb-2 mt-6">
+      <div class="font-bold text-gray-500">本日の予定</div>
+      <%= link_to new_schedule_path, class: "text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded hover:bg-indigo-100" do %>
+        ＋ 追加
+      <% end %>
+    </div>
+    <div class="mx-4 mb-6">
+      <% if @today_schedules.present? %>
+        <% @today_schedules.each do |schedule| %>
+          <div class="bg-white p-4 rounded-lg mb-2 flex items-center justify-between border-l-4 border-indigo-500 shadow-sm">
+            <div class="flex items-center">
+              <span class="font-bold mr-4 text-indigo-600">
+                <%= schedule.start_time.strftime("%H:%M") %>
+              </span>
+              <span class="text-gray-800"><%= schedule.title %></span>
+            </div>
+            
+            <!-- 削除ボタン（ゴミ箱アイコン） -->
+            <%= link_to schedule_path(schedule), data: { turbo_method: :delete }, class: "text-gray-400 hover:text-red-500 transition ml-2" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              </svg>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="bg-gray-100 p-4 rounded-lg text-center text-gray-400 text-sm">
+          今日の予定はありません
         </div>
-        <div class="schedule-item">
-            <span class="time">20:00</span>
-            <span>娘のお風呂担当</span>
-        </div>
+      <% end %>
     </div>
 
     <!-- 直近のAIログ -->
-    <div class="section-title">直近の振り返り</div>
-    <div class="log-card">
-        <div class="log-header">
-            <span>昨日 22:30</span>
-            <span class="danger-badge">危険度: ★★★★</span>
+    <div class="px-4 font-bold text-gray-500 mb-2">直近の振り返り</div>
+    <div class="mx-4 mb-20"> <!-- ボトムナビと被らないよう余白多めに -->
+      <% if @latest_consultation.present? %>
+        <%= link_to consultation_path(@latest_consultation), class: "block bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition border border-gray-100" do %>
+          <div class="flex justify-between text-xs text-gray-500 mb-1">
+            <span><%= @latest_consultation.created_at.strftime("%m/%d %H:%M") %></span>
+            
+            <!-- ご機嫌度スコアで色を変える -->
+            <% color = @latest_consultation.risk_score > 70 ? 'text-red-500' : (@latest_consultation.risk_score > 30 ? 'text-yellow-500' : 'text-blue-500') %>
+            <span class="font-bold <%= color %>">
+              ご機嫌度: <%= @latest_consultation.risk_score %>%
+            </span>
+          </div>
+          
+          <div class="text-sm text-gray-800 mb-2 font-medium truncate">
+            自分：<%= @latest_consultation.content %>
+          </div>
+          <div class="text-xs text-gray-600 bg-gray-50 p-2 rounded line-clamp-2">
+            AI：<%= @latest_consultation.ai_response %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="bg-gray-100 p-4 rounded-lg text-center text-gray-400 text-sm">
+          まだ履歴がありません。<br>下のボタンから相談してみましょう！
         </div>
-        <div class="log-text">
-            自分：「飯まだ？」<br>
-            AI：「危険です！『お腹空いたね、何か手伝おうか？』と言い換えましょう。」
-        </div>
-    </div>
-
-    <!-- 相談ボタン（FAB） -->
-    <div class="fab-btn" onclick="openModal()">＋</div>
-
-    <!-- ボトムナビゲーション -->
-    <div class="bottom-nav">
-        <div class="nav-item active">
-            <span class="nav-icon">🏠</span>ホーム
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">📅</span>予定
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">📊</span>ログ
-        </div>
+      <% end %>
     </div>
 
     <!-- モーダル（相談画面） -->
@@ -362,7 +376,7 @@
 
     <script>
         // モーダルを開く
-        function openModal() {
+        window.openModal = function() { 
             document.getElementById('modal').style.display = 'flex';
             document.getElementById('aiResponse').style.display = 'none'; // リセット
             document.getElementById('userInput').value = ''; // リセット
@@ -403,7 +417,7 @@
                 const textArea = responseArea.querySelector('p');
 
                 // スコアとテキストを書き換え
-                scoreArea.innerText = `危険度判定：${data.risk_score}%`;
+                scoreArea.innerText = `ご機嫌度判定：${data.risk_score}%`;
                 textArea.innerHTML = `
                     <strong>💡 アドバイス：</strong><br>${data.advice}<br><br>
                     <strong>🗣 模範解答：</strong><br>${data.ai_response}

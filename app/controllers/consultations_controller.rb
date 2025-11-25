@@ -1,6 +1,12 @@
 class ConsultationsController < ApplicationController
   # CSRFトークンエラーを防ぐため（今回は簡易的なAjax対応）
   protect_from_forgery except: :create
+  before_action :authenticate_user!
+
+  def index
+    # N+1問題を防ぐため、必要であればincludes等を追加してください
+    @consultations = current_user.consultations.order(created_at: :desc)
+  end
 
   def create
     # 1. フォームから送られてきた相談内容を取得
@@ -30,5 +36,9 @@ class ConsultationsController < ApplicationController
     else
       render json: { error: '保存に失敗しました' }, status: :unprocessable_entity
     end
+  end
+
+  def show
+    @consultation = current_user.consultations.find(params[:id])
   end
 end
