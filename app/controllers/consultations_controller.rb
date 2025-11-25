@@ -37,4 +37,8 @@ class ConsultationsController < ApplicationController
       render json: { error: '保存に失敗しました' }, status: :unprocessable_entity
     end
   end
+
+  def show
+    @consultation = current_user.consultations.find(params[:id])
+  end
 end
