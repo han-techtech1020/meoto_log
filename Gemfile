@@ -77,3 +77,5 @@ gem 'active_hash'
 gem 'ruby-openai'
 
 gem 'dotenv-rails', groups: [:development, :test]
+
+gem "tailwindcss-rails", "~> 4.4"
