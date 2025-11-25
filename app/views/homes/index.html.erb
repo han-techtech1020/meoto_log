@@ -292,7 +292,12 @@
     <% end %>
 
     <!-- 本日の予定（カレンダー簡易表示） -->
-    <div class="px-4 font-bold text-gray-500 mb-2 mt-6">本日の予定</div>
+    <div class="flex justify-between items-center px-4 mb-2 mt-6">
+      <div class="font-bold text-gray-500">本日の予定</div>
+      <%= link_to new_schedule_path, class: "text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded hover:bg-indigo-100" do %>
+        ＋ 追加
+      <% end %>
+    </div>
     <div class="mx-4 mb-6">
       <% if @today_schedules.present? %>
         <% @today_schedules.each do |schedule| %>
