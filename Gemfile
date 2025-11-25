@@ -79,3 +79,9 @@ gem 'ruby-openai'
 gem 'dotenv-rails', groups: [:development, :test]
 
 gem "tailwindcss-rails", "~> 4.4"
+
+# Rails本体の日本語化
+gem 'rails-i18n'
+
+# Devise（ログイン周り）の日本語化
+gem 'devise-i18n'
