@@ -1,0 +1,49 @@
+<!-- app/views/consultations/index.html.erb -->
+
+<div class="max-w-md mx-auto px-4 py-6 sm:max-w-2xl">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">相談履歴ログ</h1>
+
+  <% if @consultations.any? %>
+    <div class="space-y-4">
+      <% @consultations.each do |consultation| %>
+        <%= link_to consultation_path(consultation), class: "block bg-white rounded-lg shadow hover:shadow-md transition duration-200 overflow-hidden border border-gray-100" do %>
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <div class="text-xs text-gray-500">
+                <%= consultation.created_at.strftime("%Y/%m/%d %H:%M") %>
+              </div>
+              <!-- 危険度スコアによる色分けバッジ -->
+              <% 
+                badge_color = case consultation.risk_score # ※カラム名に合わせて変更してください
+                  when 0..30 then "bg-blue-100 text-blue-800"
+                  when 31..70 then "bg-yellow-100 text-yellow-800"
+                  else "bg-red-100 text-red-800"
+                end
+              %>
+              <span class="px-2 py-1 rounded-full text-xs font-bold <%= badge_color %>">
+                危険度: <%= consultation.risk_score %>%
+              </span>
+            </div>
+
+            <!-- 相談内容（抜粋） -->
+            <p class="text-gray-800 font-medium truncate mb-1">
+              相談: <%= consultation.content %>
+            </p>
+
+            <!-- AIアドバイス（抜粋） -->
+            <p class="text-sm text-gray-600 line-clamp-2">
+              AI: <%= consultation.ai_response %>
+            </p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-10 text-gray-500">
+      <p>まだ相談履歴がありません。</p>
+      <div class="mt-4">
+        <%= link_to "新規相談する", root_path, class: "bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow hover:bg-indigo-700 transition" %>
+      </div>
+    </div>
+  <% end %>
+</div>
