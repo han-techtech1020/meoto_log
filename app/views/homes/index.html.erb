@@ -250,12 +250,6 @@
 </head>
 <body>
 
-    <!-- ヘッダー -->
-    <header>
-        <div class="logo">Meoto-Log</div>
-        <div class="user-icon"></div>
-    </header>
-
     <!-- メインステータス（数値化エリア） -->
     <div class="status-card">
       <div class="status-title">現在の妻のHP</div>
@@ -323,22 +317,6 @@
         </div>
     </div>
 
-    <!-- 相談ボタン（FAB） -->
-    <div class="fab-btn" onclick="openModal()">＋</div>
-
-    <!-- ボトムナビゲーション -->
-    <div class="bottom-nav">
-        <div class="nav-item active">
-            <span class="nav-icon">🏠</span>ホーム
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">📅</span>予定
-        </div>
-        <div class="nav-item">
-            <span class="nav-icon">📊</span>ログ
-        </div>
-    </div>
-
     <!-- モーダル（相談画面） -->
     <div class="modal-overlay" id="modal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -362,7 +340,7 @@
 
     <script>
         // モーダルを開く
-        function openModal() {
+        window.openModal = function() { 
             document.getElementById('modal').style.display = 'flex';
             document.getElementById('aiResponse').style.display = 'none'; // リセット
             document.getElementById('userInput').value = ''; // リセット
@@ -403,7 +381,7 @@
                 const textArea = responseArea.querySelector('p');
 
                 // スコアとテキストを書き換え
-                scoreArea.innerText = `危険度判定：${data.risk_score}%`;
+                scoreArea.innerText = `ご機嫌度判定：${data.risk_score}%`;
                 textArea.innerHTML = `
                     <strong>💡 アドバイス：</strong><br>${data.advice}<br><br>
                     <strong>🗣 模範解答：</strong><br>${data.ai_response}

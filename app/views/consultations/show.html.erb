@@ -34,9 +34,9 @@
         <div class="text-xs text-gray-500 mb-1 ml-1">AIアドバイザー</div>
         <div class="bg-white text-gray-800 p-4 rounded-r-2xl rounded-tl-2xl rounded-bl-none shadow text-sm leading-relaxed space-y-3">
           
-          <!-- 危険度表示 -->
+          <!-- ご機嫌度表示 -->
           <div class="border-b pb-2 mb-2">
-            <span class="text-xs font-bold text-gray-500">妻の怒り危険度</span>
+            <span class="text-xs font-bold text-gray-500">妻のご機嫌度</span>
             <div class="flex items-center mt-1">
               <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
                 <% color_class = @consultation.risk_score > 70 ? 'bg-red-500' : (@consultation.risk_score > 30 ? 'bg-yellow-400' : 'bg-blue-500') %>
