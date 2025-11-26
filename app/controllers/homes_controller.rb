@@ -14,8 +14,8 @@ class HomesController < ApplicationController
 
     # 4. 大事な予定（今日以降の日付で、重要フラグが立っているもの）
     @important_schedules = current_user.schedules
-                                         .where(is_important: true)
-                                         .where("start_time >= ?", Time.zone.now.beginning_of_day)
-                                         .order(:start_time)
+                                       .where(is_important: true)
+                                       .where('start_time >= ?', Time.zone.now.beginning_of_day)
+                                       .order(:start_time)
   end
 end
