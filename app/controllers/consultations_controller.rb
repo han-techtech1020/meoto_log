@@ -13,8 +13,9 @@ class ConsultationsController < ApplicationController
     user_input = params[:content]
 
     # 2. AIサービスを呼び出して相談する
+    partner_personality = current_user.partner_personality # 現在のユーザーの登録しているパートナー性格を取得
     service = OpenAiService.new
-    response_string = service.chat(user_input) # ここでAIと通信（数秒かかる）
+    response_string = service.chat(user_input, partner_personality) # ここでAIと通信（数秒かかる）
 
     # 3. 返ってきたJSON文字を、Rubyで扱えるように変換（パース）する
     response_data = JSON.parse(response_string)

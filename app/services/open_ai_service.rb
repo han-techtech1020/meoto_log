@@ -5,7 +5,15 @@ class OpenAiService
     @client = OpenAI::Client.new(access_token: ENV['OPENAI_ACCESS_TOKEN'])
   end
 
-  def chat(user_input)
+  def chat(user_input, partner_personality = nil)
+    
+    # 性格情報がある場合のみ、プロンプトに追加する文章を作る
+    personality_prompt = if partner_personality.present?
+      "なお、妻の性格や特徴は以下の通りです：\n「#{partner_personality}」\nこの性格を考慮して、最適な接し方や言葉選びをアドバイスしてください。"
+    else
+      "" # なければ何もしない
+    end
+    
     # AIへの「役割」と「命令」を定義（ここがプロンプトエンジニアリング！）
     system_prompt = <<~TEXT
       あなたは夫婦関係の専門家であり、論理的なカウンセラーです。
