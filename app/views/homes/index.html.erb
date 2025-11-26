@@ -20,7 +20,7 @@
           <!-- スコア表示 -->
           <div class="flex justify-center items-end gap-1 mb-2">
             <div class="text-6xl font-extrabold tracking-tighter"><%= @latest_status.hp_percentage %></div>
-            <div class="text-xl font-bold mb-2">点</div>
+            <div class="text-xl font-bold mb-2">%</div>
           </div>
           <div class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
             コンディション：<%= @latest_status.mood.name %>
@@ -113,7 +113,7 @@
                   color = score >= 80 ? 'text-blue-600 bg-blue-50' : (score >= 40 ? 'text-yellow-600 bg-yellow-50' : 'text-red-600 bg-red-50') 
                 %>
                 <span class="font-bold px-2 py-1 rounded-md <%= color %>">
-                  ご機嫌度: <%= score %>点
+                  ご機嫌度: <%= score %>%
                 </span>
               </div>
               
@@ -139,118 +139,7 @@
       </div> <!-- px-4 end -->
     </div> <!-- max-w-md end -->
 
-    <!-- モーダル（相談画面） -->
-    <div id="modal" class="fixed inset-0 bg-black/60 z-[100] hidden justify-center items-end backdrop-blur-sm" onclick="closeModal(event)">
-        <div class="bg-white w-full max-w-md mx-auto rounded-t-3xl p-6 shadow-2xl transform transition-transform" onclick="event.stopPropagation()">
-            <!-- ハンドルバー -->
-            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
-            
-            <h3 class="text-lg font-bold text-gray-800 mb-1">AIに相談する</h3>
-            <p class="text-xs text-gray-500 mb-6">状況を入力すると、AIが最適な言葉を返します</p>
-            
-            <div class="flex gap-2 mb-4">
-                <input type="text" id="userInput" placeholder="例：『ご飯まだ？』と聞いたら怒られた..." class="flex-1 bg-gray-50 border-0 rounded-full px-5 py-4 focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 placeholder-gray-400">
-                <button class="send-btn bg-blue-600 text-white font-bold px-6 rounded-full hover:bg-blue-700 transition shadow-lg shadow-blue-200" onclick="simulateAI()">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- AIの返信表示エリア -->
-            <div class="ai-response hidden mt-4" id="aiResponse">
-                <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                    <div class="ai-score font-bold mb-3 text-lg"></div>
-                    <p class="text-sm text-gray-700 leading-relaxed"></p>
-                </div>
-            </div>
-            
-            <!-- 下部の余白確保（iPhoneなどのバー用） -->
-            <div class="h-8"></div>
-        </div>
-    </div>
-
-    <script>
-        // モーダルを開く
-        window.openModal = function() { 
-            const modal = document.getElementById('modal');
-            if (!modal) return;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.getElementById('aiResponse').classList.add('hidden'); 
-            document.getElementById('userInput').value = ''; 
-            // 入力欄にフォーカス
-            setTimeout(() => document.getElementById('userInput').focus(), 100);
-        }
-
-        // モーダルを閉じる
-        function closeModal(event) {
-            if (event.target === document.getElementById('modal')) {
-                const modal = document.getElementById('modal');
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        // AI相談処理
-        function simulateAI() {
-            const input = document.getElementById('userInput').value;
-            if (!input) return alert("内容を入力してください");
-
-            const sendBtn = document.querySelector('.send-btn');
-            const originalContent = sendBtn.innerHTML;
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = '<div class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>';
-            
-            fetch('/consultations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ content: input })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const responseArea = document.getElementById('aiResponse');
-                const scoreArea = responseArea.querySelector('.ai-score');
-                const textArea = responseArea.querySelector('p');
-
-                // 1. 点数に応じて「色」を決める
-                let scoreColor = 'text-red-500'; 
-                if (data.risk_score >= 80) {
-                    scoreColor = 'text-blue-600'; 
-                } else if (data.risk_score >= 40) {
-                    scoreColor = 'text-yellow-500'; 
-                }
-
-                // 2. クラスを適用
-                scoreArea.className = `ai-score font-bold ${scoreColor} mb-2`;
-                scoreArea.innerText = `予想されるご機嫌度：${data.risk_score}点`;
-                
-                textArea.innerHTML = `
-                    <div class="mb-3">
-                        <span class="bg-white text-gray-500 text-xs font-bold px-2 py-1 rounded border border-gray-200">💡 アドバイス</span>
-                        <div class="mt-1">${data.advice}</div>
-                    </div>
-                    <div>
-                        <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">🗣 解答例</span>
-                        <div class="mt-1 font-bold text-gray-800">"${data.ai_response}"</div>
-                    </div>
-                `;
-
-                responseArea.classList.remove('hidden');
-            })
-            .catch(error => {
-                alert('エラーが発生しました。');
-                console.error(error);
-            })
-            .finally(() => {
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = originalContent;
-            });
-        }
-    </script>
+    
 
 </body>
 </html>
