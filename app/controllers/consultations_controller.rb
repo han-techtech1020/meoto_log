@@ -23,7 +23,7 @@ class ConsultationsController < ApplicationController
     @consultation = current_user.consultations.new(
       content: user_input,
       ai_response: response_data['ai_response'], # 模範解答
-      risk_score: response_data['risk_score']    # 危険度スコア
+      risk_score: response_data['mood_score']    # ご機嫌度スコア
     )
 
     if @consultation.save

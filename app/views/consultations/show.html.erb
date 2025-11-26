@@ -39,7 +39,9 @@
             <span class="text-xs font-bold text-gray-500">妻のご機嫌度</span>
             <div class="flex items-center mt-1">
               <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                <% color_class = @consultation.risk_score > 70 ? 'bg-red-500' : (@consultation.risk_score > 30 ? 'bg-yellow-400' : 'bg-blue-500') %>
+                <% score = @consultation.risk_score
+                   color_class = score >= 80 ? 'bg-blue-500' : (score >= 40 ? 'bg-yellow-400' : 'bg-red-500') 
+                %>
                 <div class="<%= color_class %> h-2.5 rounded-full" style="width: <%= @consultation.risk_score %>%"></div>
               </div>
               <span class="font-bold <%= color_class.sub('bg-', 'text-') %>"><%= @consultation.risk_score %>%</span>
