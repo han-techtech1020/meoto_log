@@ -24,7 +24,15 @@
         <!-- 右側のメニュー（ログイン状態で切り替え） -->
         <div class="text-sm">
           <% if user_signed_in? %>
-            <!-- ログイン中：ログアウトボタン -->
+            <!-- ユーザー名（クリックで編集へ） -->
+        <%= link_to edit_user_registration_path, class: "flex items-center gap-2 text-gray-600 hover:text-indigo-600 font-bold transition" do %>
+          <!-- 人アイコン -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+          </svg>
+          <%= current_user.nickname %>
+        <% end %>
+        
             <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-gray-500 hover:text-gray-700" %>
           <% else %>
             <!-- 未ログイン：ログインボタン -->
@@ -70,15 +78,128 @@
           <span class="text-[10px] font-bold text-indigo-600 mt-9">相談</span>
         <% end %>
 
-        <!-- 履歴ログ -->
+        <!-- 相談ログ -->
         <%= link_to consultations_path, class: "flex flex-col items-center w-full py-1 text-gray-400 hover:text-indigo-600 transition #{current_page?(consultations_path) ? 'text-indigo-600' : ''}" do %>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mb-0.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
           </svg>
-          <span class="text-[10px] font-bold">履歴</span>
+          <span class="text-[10px] font-bold">相談ログ</span>
         <% end %>
 
       </nav>
+
+      <!-- モーダル（相談画面） -->
+    <div id="modal" class="fixed inset-0 bg-black/60 z-[100] hidden justify-center items-end backdrop-blur-sm" onclick="closeModal(event)">
+        <div class="bg-white w-full max-w-md mx-auto rounded-t-3xl p-6 shadow-2xl transform transition-transform" onclick="event.stopPropagation()">
+            <!-- ハンドルバー -->
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
+            
+            <h3 class="text-lg font-bold text-gray-800 mb-1">AIに相談する</h3>
+            <p class="text-xs text-gray-500 mb-6">状況を入力すると、AIが最適な言葉を返します</p>
+            
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="userInput" placeholder="例：『ご飯まだ？』と聞いたら怒られた..." class="flex-1 bg-gray-50 border-0 rounded-full px-5 py-4 focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 placeholder-gray-400">
+                <button class="send-btn bg-blue-600 text-white font-bold px-6 rounded-full hover:bg-blue-700 transition shadow-lg shadow-blue-200" onclick="simulateAI()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- AIの返信表示エリア -->
+            <div class="ai-response hidden mt-4" id="aiResponse">
+                <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div class="ai-score font-bold mb-3 text-lg"></div>
+                    <p class="text-sm text-gray-700 leading-relaxed"></p>
+                </div>
+            </div>
+            
+            <!-- 下部の余白確保（iPhoneなどのバー用） -->
+            <div class="h-8"></div>
+        </div>
+    </div>
+
+    <script>
+        // モーダルを開く
+        window.openModal = function() { 
+            const modal = document.getElementById('modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('aiResponse').classList.add('hidden'); 
+            document.getElementById('userInput').value = ''; 
+            // 入力欄にフォーカス
+            setTimeout(() => document.getElementById('userInput').focus(), 100);
+        }
+
+        // モーダルを閉じる
+        function closeModal(event) {
+            if (event.target === document.getElementById('modal')) {
+                const modal = document.getElementById('modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // AI相談処理
+        function simulateAI() {
+            const input = document.getElementById('userInput').value;
+            if (!input) return alert("内容を入力してください");
+
+            const sendBtn = document.querySelector('.send-btn');
+            const originalContent = sendBtn.innerHTML;
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<div class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>';
+            
+            fetch('/consultations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ content: input })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseArea = document.getElementById('aiResponse');
+                const scoreArea = responseArea.querySelector('.ai-score');
+                const textArea = responseArea.querySelector('p');
+
+                // 1. 点数に応じて「色」を決める
+                let scoreColor = 'text-red-500'; 
+                if (data.risk_score >= 80) {
+                    scoreColor = 'text-blue-600'; 
+                } else if (data.risk_score >= 40) {
+                    scoreColor = 'text-yellow-500'; 
+                }
+
+                // 2. クラスを適用
+                scoreArea.className = `ai-score font-bold ${scoreColor} mb-2`;
+                scoreArea.innerText = `予想されるご機嫌度：${data.risk_score}点`;
+                
+                textArea.innerHTML = `
+                    <div class="mb-3">
+                        <span class="bg-white text-gray-500 text-xs font-bold px-2 py-1 rounded border border-gray-200">💡 アドバイス</span>
+                        <div class="mt-1">${data.advice}</div>
+                    </div>
+                    <div>
+                        <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">🗣 解答例</span>
+                        <div class="mt-1 font-bold text-gray-800">"${data.ai_response}"</div>
+                    </div>
+                `;
+
+                responseArea.classList.remove('hidden');
+            })
+            .catch(error => {
+                alert('エラーが発生しました。');
+                console.error(error);
+            })
+            .finally(() => {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = originalContent;
+            });
+        }
+    </script>
     <% end %>
 
   </body>

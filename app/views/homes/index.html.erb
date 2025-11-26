@@ -1,447 +1,165 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meoto-Log（メオトログ）</title>
-    <style>
-        /* --- ベーススタイル（明るくカジュアルな雰囲気） --- */
-        :root {
-            --primary-color: #4A90E2; /* 知的な青 */
-            --accent-color: #FF9F43;  /* 元気なオレンジ */
-            --bg-color: #F4F7F6;
-            --text-color: #333;
-            --white: #ffffff;
-            --danger-color: #EE5253;
-            --safe-color: #1DD1A1;
-        }
+    <% partner_name = current_user&.partner_name.presence || '妻' %>
 
-        body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            padding-bottom: 80px; /* ナビゲーション分 */
-        }
+    <!-- ▼▼ 全体をスマホ幅（max-w-md）に制限して中央寄せにするコンテナ ▼▼ -->
+    <div class="max-w-md mx-auto bg-gray-50 min-h-screen pb-20">
 
-        /* --- ヘッダー --- */
-        header {
-            background-color: var(--white);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .logo {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-        .user-icon {
-            width: 35px;
-            height: 35px;
-            background-color: #ddd;
-            border-radius: 50%;
-        }
-
-        /* --- メインステータス（数値化・可視化エリア） --- */
-        .status-card {
-            background: linear-gradient(135deg, var(--primary-color), #64b3f4);
-            color: var(--white);
-            margin: 20px;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-            text-align: center;
-        }
-        .status-title {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-        .status-score {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-        .status-meter {
-            margin-top: 10px;
-            background: rgba(255,255,255,0.3);
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .status-bar {
-            background: var(--accent-color);
-            height: 100%;
-            width: 80%; /* 仮の数値 */
-        }
-        .status-message {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        /* --- 本日の予定（カレンダー要素） --- */
-        .section-title {
-            padding: 0 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 10px;
-        }
-        .schedule-list {
-            margin: 0 20px 20px 20px;
-        }
-        .schedule-item {
-            background-color: var(--white);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            border-left: 5px solid var(--primary-color);
-        }
-        .time {
-            font-weight: bold;
-            margin-right: 15px;
-            color: var(--primary-color);
-        }
-
-        /* --- 直近のAIログ（振り返り） --- */
-        .log-card {
-            background-color: var(--white);
-            margin: 0 20px 10px 20px;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-        .log-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: #888;
-            margin-bottom: 5px;
-        }
-        .danger-badge {
-            background-color: var(--danger-color);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-        }
-        .log-text {
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
-
-        /* --- フローティングアクションボタン（相談ボタン） --- */
-        .fab-btn {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background-color: var(--accent-color);
-            color: var(--white);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2rem;
-            box-shadow: 0 4px 10px rgba(255, 159, 67, 0.4);
-            cursor: pointer;
-            transition: transform 0.2s;
-            z-index: 100;
-        }
-        .fab-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* --- ボトムナビゲーション --- */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: var(--white);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #eee;
-            z-index: 90;
-        }
-        .nav-item {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #888;
-            cursor: pointer;
-        }
-        .nav-icon {
-            font-size: 1.2rem;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .nav-item.active {
-            color: var(--primary-color);
-        }
-
-        /* --- モーダル（AI相談画面・ダミー） --- */
-        .modal-overlay {
-            display: none; /* 初期状態は非表示 */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 200;
-            justify-content: center;
-            align-items: flex-end;
-        }
-        .modal-content {
-            background-color: var(--white);
-            width: 100%;
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            box-sizing: border-box;
-            animation: slideUp 0.3s ease-out;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-        }
-        input[type="text"] {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 1rem;
-        }
-        .send-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .ai-response {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #E3F2FD;
-            border-radius: 10px;
-            display: none; /* 最初は隠す */
-        }
-        .ai-score {
-            font-weight: bold;
-            color: var(--danger-color);
-            margin-bottom: 5px;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- メインステータス（数値化エリア） -->
-    <div class="status-card">
-      <div class="status-title">現在の妻のHP</div>
-      
-      <% if @latest_status.present? %>
-        <!-- データがある場合 -->
-        <div class="status-score"><%= @latest_status.hp_percentage %>%</div>
-        <div class="status-message">機嫌：<%= @latest_status.mood.name %></div>
+      <!-- 1. メインステータス（背景エリアを少し広げて、下部を丸める） -->
+      <div class="bg-gradient-to-br from-blue-600 to-blue-400 pt-8 pb-16 px-6 rounded-b-[2.5rem] shadow-md text-white text-center relative z-0">
+        <div class="text-sm opacity-90 mb-1 font-medium tracking-wide">現在の<%= partner_name %>のご機嫌度</div>
         
-        <!-- HPバーの長さを動的に変える（style属性を使う） -->
-        <div class="status-meter">
-          <div class="status-bar" style="width: <%= @latest_status.hp_percentage %>%;"></div>
-        </div>
-      <% else %>
-        <!-- データがまだない場合 -->
-        <div class="status-score">-- %</div>
-        <div class="status-message">まずはHPを記録しましょう！</div>
-      <% end %>
-    </div>
-
-    <!-- HP更新フォーム（仮設置） -->
-    <% if user_signed_in? %>
-      <div style="margin: 20px; padding: 20px; background: white; border-radius: 10px;">
-        <h3>妻のHPを更新する</h3>
-        <%= form_with model: @partner_status, local: true do |f| %>
+        <% if @latest_status.present? %>
+          <!-- スコア表示 -->
+          <div class="flex justify-center items-end gap-1 mb-2">
+            <div class="text-6xl font-extrabold tracking-tighter"><%= @latest_status.hp_percentage %></div>
+            <div class="text-xl font-bold mb-2">%</div>
+          </div>
+          <div class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
+            ご様子：<%= @latest_status.mood.name %>
+          </div>
           
-          <div style="margin-bottom: 10px;">
-            <label>HP (0-100):</label>
-            <%= f.number_field :hp_percentage, in: 0..100, step: 10, style: "padding: 5px;" %>
+          <!-- メーター -->
+          <div class="mt-6 bg-black/20 h-3 rounded-full overflow-hidden w-full max-w-xs mx-auto">
+            <div class="bg-yellow-400 h-full shadow-[0_0_10px_rgba(250,204,21,0.5)] transition-all duration-1000 ease-out" style="width: <%= @latest_status.hp_percentage %>%;"></div>
           </div>
-
-          <div style="margin-bottom: 10px;">
-            <label>機嫌:</label>
-            <%= f.collection_select :mood_id, Mood.all, :id, :name, {}, {style: "padding: 5px;"} %>
-          </div>
-
-          <%= f.submit "更新する", class: "send-btn", style: "background-color: var(--accent-color);" %>
+        <% else %>
+          <div class="text-4xl font-bold my-6 text-white/50">-- 点</div>
+          <div class="text-sm font-bold">まずは記録から始めましょう</div>
         <% end %>
       </div>
-    <% end %>
 
-    <!-- 本日の予定 -->
-    <div class="flex justify-between items-center px-4 mb-2 mt-6">
-      <div class="font-bold text-gray-500">本日の予定</div>
-      <%= link_to new_schedule_path, class: "text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded hover:bg-indigo-100" do %>
-        ＋ 追加
-      <% end %>
-    </div>
-    <div class="mx-4 mb-6">
-      <% if @today_schedules.present? %>
-        <% @today_schedules.each do |schedule| %>
-          <div class="bg-white p-4 rounded-lg mb-2 flex items-center justify-between border-l-4 border-indigo-500 shadow-sm">
-            <div class="flex items-center">
-              <span class="font-bold mr-4 text-indigo-600">
-                <%= schedule.start_time.strftime("%H:%M") %>
-              </span>
-              <span class="text-gray-800"><%= schedule.title %></span>
-            </div>
-            
-            <!-- 削除ボタン（ゴミ箱アイコン） -->
-            <%= link_to schedule_path(schedule), data: { turbo_method: :delete }, class: "text-gray-400 hover:text-red-500 transition ml-2" do %>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+      <!-- 2. HP更新フォーム（上の青いエリアに少し重ねるデザイン） -->
+      <% if user_signed_in? %>
+        <div class="mx-4 -mt-8 relative z-10">
+          <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h3 class="text-center font-bold text-gray-700 mb-4 flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
               </svg>
+              コンディションを更新
+            </h3>
+            
+            <%= form_with model: @partner_status, local: true, class: "space-y-4" do |f| %>
+              <div class="flex gap-4">
+                <div class="w-1/2">
+                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">ご機嫌度 (0-100)</label>
+                  <%= f.number_field :hp_percentage, in: 0..100, step: 10, class: "w-full bg-gray-50 border-0 text-gray-800 text-lg font-bold rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 text-center placeholder-gray-300", placeholder: "80" %>
+                </div>
+                <div class="w-1/2">
+                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">ご様子</label>
+                  <%= f.collection_select :mood_id, Mood.all, :id, :name, {}, {class: "w-full bg-gray-50 border-0 text-gray-800 text-sm font-bold rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-blue-500 appearance-none"} %>
+                </div>
+              </div>
+
+              <%= f.submit "記録する", class: "w-full bg-gray-800 text-white font-bold py-3.5 rounded-xl shadow-lg hover:bg-gray-700 transform active:scale-95 transition-all cursor-pointer" %>
             <% end %>
           </div>
-        <% end %>
-      <% else %>
-        <div class="bg-gray-100 p-4 rounded-lg text-center text-gray-400 text-sm">
-          今日の予定はありません
         </div>
       <% end %>
-    </div>
 
-    <!-- 直近のAIログ -->
-    <div class="px-4 font-bold text-gray-500 mb-2">直近の振り返り</div>
-    <div class="mx-4 mb-20"> <!-- ボトムナビと被らないよう余白多めに -->
-      <% if @latest_consultation.present? %>
-        <%= link_to consultation_path(@latest_consultation), class: "block bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition border border-gray-100" do %>
-          <div class="flex justify-between text-xs text-gray-500 mb-1">
-            <span><%= @latest_consultation.created_at.strftime("%m/%d %H:%M") %></span>
-            
-            <!-- ご機嫌度スコアで色を変える -->
-            <% color = @latest_consultation.risk_score > 70 ? 'text-red-500' : (@latest_consultation.risk_score > 30 ? 'text-yellow-500' : 'text-blue-500') %>
-            <span class="font-bold <%= color %>">
-              ご機嫌度: <%= @latest_consultation.risk_score %>%
-            </span>
-          </div>
-          
-          <div class="text-sm text-gray-800 mb-2 font-medium truncate">
-            自分：<%= @latest_consultation.content %>
-          </div>
-          <div class="text-xs text-gray-600 bg-gray-50 p-2 rounded line-clamp-2">
-            AI：<%= @latest_consultation.ai_response %>
-          </div>
-        <% end %>
-      <% else %>
-        <div class="bg-gray-100 p-4 rounded-lg text-center text-gray-400 text-sm">
-          まだ履歴がありません。<br>下のボタンから相談してみましょう！
+      <!-- コンテンツエリアの余白 -->
+      <div class="px-4 mt-8">
+        
+        <!-- 3. 本日の予定 -->
+        <div class="flex justify-between items-end mb-3">
+          <div class="font-bold text-gray-700 text-lg">📅 本日の予定</div>
+          <%= link_to new_schedule_path, class: "text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition" do %>
+            ＋ 追加
+          <% end %>
         </div>
-      <% end %>
-    </div>
 
-    <!-- モーダル（相談画面） -->
-    <div class="modal-overlay" id="modal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3>AIに相談する</h3>
-            <p>今の状況や、言いたいことを短く入力してください</p>
-            <div class="chat-input-area">
-                <input type="text" id="userInput" placeholder="例：妻が不機嫌で...">
-                <button class="send-btn" onclick="simulateAI()">送信</button>
+        <div class="space-y-3 mb-10">
+          <% if @today_schedules.present? %>
+            <% @today_schedules.each do |schedule| %>
+              <div class="bg-white p-4 rounded-xl flex items-center justify-between shadow-sm border border-gray-100">
+                <div class="flex items-center gap-4">
+                  <div class="bg-blue-100 text-blue-600 font-bold text-sm px-3 py-1 rounded-md">
+                    <%= schedule.start_time.strftime("%H:%M") %>
+                  </div>
+                  <span class="text-gray-800 font-medium"><%= schedule.title %></span>
+                </div>
+                
+                <%= link_to schedule_path(schedule), data: { turbo_method: :delete }, class: "text-gray-300 hover:text-red-500 p-1" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300">
+              <p class="text-gray-400 text-sm">予定はありません</p>
             </div>
-
-            <!-- AIの返信表示エリア -->
-            <div class="ai-response" id="aiResponse">
-                <div class="ai-score">危険度判定：★★★★☆ (80%)</div>
-                <p>その発言は「私の大変さをわかってない」と受け取られる可能性があります。<br><br>
-                <strong>💡 模範解答：</strong><br>
-                「今日もお疲れ様。赤ちゃん泣いてて大変だったね。何か飲み物でも入れようか？」
-                </p>
-            </div>
+          <% end %>
         </div>
-    </div>
 
-    <script>
-        // モーダルを開く
-        window.openModal = function() { 
-            const modal = document.getElementById('modal');
-    
-            // もしモーダルが見つからなかったら（ログイン画面など）、何もしないで終了
-            if (!modal) return;
+        <!-- 4. 大事な予定 -->
+        <div class="flex items-end mb-3 mt-8">
+          <div class="font-bold text-gray-700 text-lg">🎁 大事な予定</div>
+        </div>
 
-            modal.style.display = 'flex';
-            document.getElementById('aiResponse').style.display = 'none'; // リセット
-            document.getElementById('userInput').value = ''; // リセット
-        }
+        <div class="space-y-3 mb-10">
+          <% if @important_schedules.present? %>
+            <% @important_schedules.each do |schedule| %>
+              <!-- ここは border-pink-400 などにして特別感を出す -->
+              <div class="bg-white p-4 rounded-xl flex items-center justify-between shadow-sm border-l-4 border-pink-400">
+                <div class="flex items-center gap-4">
+                  <!-- 日付も表示する（記念日は先の日程かもしれないので） -->
+                  <div class="bg-pink-100 text-pink-600 font-bold text-sm px-3 py-1 rounded-md text-center">
+                    <span class="text-xs block"><%= schedule.start_time.strftime("%m/%d") %></span>
+                    <%= schedule.start_time.strftime("%H:%M") %>
+                  </div>
+                  <span class="text-gray-800 font-medium"><%= schedule.title %></span>
+                </div>
+                
+                <%= link_to schedule_path(schedule), data: { turbo_method: :delete }, class: "text-gray-300 hover:text-red-500 p-1" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300">
+              <p class="text-gray-400 text-sm">大事な予定は登録されていません</p>
+            </div>
+          <% end %>
+        </div>
 
-        // モーダルを閉じる
-        function closeModal(event) {
-            if (event.target === document.getElementById('modal')) {
-                document.getElementById('modal').style.display = 'none';
-            }
-        }
+        <!-- 5. 直近の振り返り -->
+        <div class="font-bold text-gray-700 text-lg mb-3">📝 直近のログ</div>
+        <div class="mb-24">
+          <% if @latest_consultation.present? %>
+            <%= link_to consultations_path, class: "block bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 group" do %>
+              <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
+                <span><%= @latest_consultation.created_at.strftime("%m/%d %H:%M") %></span>
+                
+                <% score = @latest_consultation.risk_score
+                  color = score >= 80 ? 'text-blue-600 bg-blue-50' : (score >= 40 ? 'text-yellow-600 bg-yellow-50' : 'text-red-600 bg-red-50') 
+                %>
+                <span class="font-bold px-2 py-1 rounded-md <%= color %>">
+                  ご機嫌度: <%= score %>%
+                </span>
+              </div>
+              
+              <div class="text-gray-800 font-bold mb-3 line-clamp-1 group-hover:text-blue-600 transition">
+                <%= @latest_consultation.content %>
+              </div>
+              
+              <div class="flex gap-3 items-start bg-gray-50 p-3 rounded-lg">
+                <div class="text-lg">🤖</div>
+                <div class="text-xs text-gray-600 leading-relaxed line-clamp-2">
+                  <%= @latest_consultation.ai_response %>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300">
+              <p class="text-gray-400 text-sm">履歴がありません</p>
+              <p class="text-xs text-gray-400 mt-1">下のボタンから相談してみましょう</p>
+            </div>
+          <% end %>
+        </div>
 
-        // AI相談のシミュレーション（デモ用）
-        function simulateAI() {
-            const input = document.getElementById('userInput').value;
-            if (!input) return alert("内容を入力してください");
+      </div> <!-- px-4 end -->
+    </div> <!-- max-w-md end -->
 
-            // 送信ボタンを一時的に無効化（連打防止）
-            const sendBtn = document.querySelector('.send-btn');
-            sendBtn.disabled = true;
-            sendBtn.innerText = '通信中...';
-
-            // Railsのコントローラーにデータを送る（fetch）
-            fetch('/consultations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Railsのセキュリティトークンを送るおまじない
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ content: input })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // AIからの返信を表示エリアにセット
-                const responseArea = document.getElementById('aiResponse');
-                const scoreArea = responseArea.querySelector('.ai-score');
-                const textArea = responseArea.querySelector('p');
-
-                // スコアとテキストを書き換え
-                scoreArea.innerText = `ご機嫌度判定：${data.risk_score}%`;
-                textArea.innerHTML = `
-                    <strong>💡 アドバイス：</strong><br>${data.advice}<br><br>
-                    <strong>🗣 模範解答：</strong><br>${data.ai_response}
-                `;
-
-                // 表示する
-                responseArea.style.display = 'block';
-            })
-            .catch(error => {
-                alert('エラーが発生しました。もう一度お試しください。');
-                console.error(error);
-            })
-            .finally(() => {
-                // ボタンを元に戻す
-                sendBtn.disabled = false;
-                sendBtn.innerText = '送信';
-            });
-        }
-    </script>
-
-</body>
-</html>

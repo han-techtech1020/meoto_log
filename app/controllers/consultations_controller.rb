@@ -13,8 +13,9 @@ class ConsultationsController < ApplicationController
     user_input = params[:content]
 
     # 2. AIサービスを呼び出して相談する
+    partner_personality = current_user.partner_personality # 現在のユーザーの登録しているパートナー性格を取得
     service = OpenAiService.new
-    response_string = service.chat(user_input) # ここでAIと通信（数秒かかる）
+    response_string = service.chat(user_input, partner_personality) # ここでAIと通信（数秒かかる）
 
     # 3. 返ってきたJSON文字を、Rubyで扱えるように変換（パース）する
     response_data = JSON.parse(response_string)
@@ -23,7 +24,7 @@ class ConsultationsController < ApplicationController
     @consultation = current_user.consultations.new(
       content: user_input,
       ai_response: response_data['ai_response'], # 模範解答
-      risk_score: response_data['risk_score']    # 危険度スコア
+      risk_score: response_data['mood_score']    # ご機嫌度スコア
     )
 
     if @consultation.save
@@ -38,7 +39,11 @@ class ConsultationsController < ApplicationController
     end
   end
 
-  def show
-    @consultation = current_user.consultations.find(params[:id])
+  def destroy
+    consultation = current_user.consultations.find(params[:id])
+    consultation.destroy
+
+    # 一覧ページへ戻り、メッセージを表示
+    redirect_to consultations_path, notice: '履歴を削除しました'
   end
 end

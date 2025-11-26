@@ -1,49 +1,111 @@
-<!-- app/views/consultations/index.html.erb -->
-
-<div class="max-w-md mx-auto px-4 py-6 sm:max-w-2xl">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">相談履歴ログ</h1>
+<div class="max-w-md mx-auto px-4 py-6 pb-24 sm:max-w-2xl">
+  <h1 class="text-xl font-bold text-gray-800 mb-6 text-center">相談ログ</h1>
 
   <% if @consultations.any? %>
-    <div class="space-y-4">
+    <div class="space-y-3">
       <% @consultations.each do |consultation| %>
-        <%= link_to consultation_path(consultation), class: "block bg-white rounded-lg shadow hover:shadow-md transition duration-200 overflow-hidden border border-gray-100" do %>
+        <!-- カード本体（クリックで開閉） -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer transition-all duration-300" onclick="toggleCard(this)">
+          
           <div class="p-4">
-            <div class="flex justify-between items-start mb-2">
-              <div class="text-xs text-gray-500">
+            <!-- ヘッダー（日付・スコア・削除） -->
+            <div class="flex justify-between items-start mb-3">
+              <div class="text-xs text-gray-400">
                 <%= consultation.created_at.strftime("%Y/%m/%d %H:%M") %>
               </div>
-              <!-- ご機嫌度スコアによる色分けバッジ -->
-              <% 
-                badge_color = case consultation.risk_score # ※カラム名に合わせて変更してください
-                  when 0..30 then "bg-blue-100 text-blue-800"
-                  when 31..70 then "bg-yellow-100 text-yellow-800"
-                  else "bg-red-100 text-red-800"
-                end
-              %>
-              <span class="px-2 py-1 rounded-full text-xs font-bold <%= badge_color %>">
-                ご機嫌度: <%= consultation.risk_score %>%
-              </span>
+              
+              <div class="flex items-center gap-3">
+                <!-- スコア -->
+                <% score = consultation.risk_score
+                   color = score >= 80 ? 'bg-blue-100 text-blue-700' : (score >= 40 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') 
+                %>
+                <span class="px-2 py-0.5 rounded text-xs font-bold <%= color %>">
+                  <%= score %>%
+                </span>
+
+                <!-- 削除ボタン（イベントのバブリング停止を入れて、カードが開かないようにする） -->
+                <%= button_to consultation_path(consultation), method: :delete, data: { turbo_confirm: "本当に削除しますか？" }, onclick: "event.stopPropagation()", class: "text-gray-300 hover:text-red-500 p-1 -mr-2 -mt-2 bg-transparent border-0 cursor-pointer" do %>  
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                <% end %>
+              </div>
+            </div>
+            
+            <!-- 相談内容（常に表示） -->
+            <div class="flex items-start gap-2 mb-2">
+              <span class="text-lg">🧑‍💻</span>
+              <p class="text-gray-800 font-bold text-sm leading-relaxed">
+                <%= consultation.content %>
+              </p>
             </div>
 
-            <!-- 相談内容（抜粋） -->
-            <p class="text-gray-800 font-medium truncate mb-1">
-              相談: <%= consultation.content %>
-            </p>
+            <!-- AIの回答（初期状態は隠す・または一部表示） -->
+            <!-- closed-content: 閉じてる時（1行だけ表示） -->
+            <div class="closed-content flex items-center gap-2 mt-2 opacity-70">
+              <span class="text-lg">🤖</span>
+              <p class="text-xs text-gray-600 line-clamp-1">
+                <%= consultation.ai_response %>
+              </p>
+            </div>
 
-            <!-- AIアドバイス（抜粋） -->
-            <p class="text-sm text-gray-600 line-clamp-2">
-              AI: <%= consultation.ai_response %>
-            </p>
+            <!-- open-content: 開いた時（全部表示） -->
+            <div class="open-content hidden mt-3 bg-blue-50 p-3 rounded-lg border border-blue-100 animate-fade-in">
+              <div class="flex gap-2 mb-1">
+                <span class="text-lg">🤖</span>
+                <span class="text-xs font-bold text-blue-600 mt-1">AIのアドバイス</span>
+              </div>
+              <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap pl-7">
+                <%= consultation.ai_response %>
+              </p>
+            </div>
+
+            <!-- 開閉インジケーター -->
+            <div class="text-center mt-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-300 mx-auto transition-transform duration-300 arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
           </div>
-        <% end %>
+        </div>
       <% end %>
     </div>
   <% else %>
-    <div class="text-center py-10 text-gray-500">
-      <p>まだ相談履歴がありません。</p>
-      <div class="mt-4">
-        <%= link_to "新規相談する", root_path, class: "bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow hover:bg-indigo-700 transition" %>
-      </div>
+    <div class="text-center py-10 text-gray-500 bg-white rounded-xl border border-dashed border-gray-300">
+      <p>履歴がありません</p>
     </div>
   <% end %>
 </div>
+
+<script>
+  function toggleCard(card) {
+    const openContent = card.querySelector('.open-content');
+    const closedContent = card.querySelector('.closed-content');
+    const arrow = card.querySelector('.arrow-icon');
+
+    if (openContent.classList.contains('hidden')) {
+      // 開く処理
+      openContent.classList.remove('hidden');
+      closedContent.classList.add('hidden');
+      arrow.classList.add('rotate-180'); // 矢印を回転
+      card.classList.add('ring-2', 'ring-blue-200'); // 枠線を強調
+    } else {
+      // 閉じる処理
+      openContent.classList.add('hidden');
+      closedContent.classList.remove('hidden');
+      arrow.classList.remove('rotate-180');
+      card.classList.remove('ring-2', 'ring-blue-200');
+    }
+  }
+</script>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+</style>
