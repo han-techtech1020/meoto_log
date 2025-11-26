@@ -5,7 +5,11 @@ class ApplicationController < ActionController::Base
   private
 
   def configure_permitted_parameters
+        # 新規登録時（sign_up）
     devise_parameter_sanitizer.permit(:sign_up, keys: [:nickname])
+    
+    # ▼ 追加：プロフィール更新時（account_update）に、ニックネームとパートナー名を許可
+    devise_parameter_sanitizer.permit(:account_update, keys: [:nickname, :partner_name])
   end
 
   def basic_auth

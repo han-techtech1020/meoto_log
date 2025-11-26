@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meoto-Log（メオトログ）</title>
-
-</head>
-<body>
-    <!-- app/views/homes/index.html.erb -->
+    <% partner_name = current_user&.partner_name.presence || '妻' %>
 
     <!-- ▼▼ 全体をスマホ幅（max-w-md）に制限して中央寄せにするコンテナ ▼▼ -->
     <div class="max-w-md mx-auto bg-gray-50 min-h-screen pb-20">
 
       <!-- 1. メインステータス（背景エリアを少し広げて、下部を丸める） -->
       <div class="bg-gradient-to-br from-blue-600 to-blue-400 pt-8 pb-16 px-6 rounded-b-[2.5rem] shadow-md text-white text-center relative z-0">
-        <div class="text-sm opacity-90 mb-1 font-medium tracking-wide">現在の妻のご機嫌度</div>
+        <div class="text-sm opacity-90 mb-1 font-medium tracking-wide">現在の<%= partner_name %>のご機嫌度</div>
         
         <% if @latest_status.present? %>
           <!-- スコア表示 -->
@@ -23,7 +14,7 @@
             <div class="text-xl font-bold mb-2">%</div>
           </div>
           <div class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
-            コンディション：<%= @latest_status.mood.name %>
+            ご様子：<%= @latest_status.mood.name %>
           </div>
           
           <!-- メーター -->
@@ -44,7 +35,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
               </svg>
-              ステータスを更新
+              コンディションを更新
             </h3>
             
             <%= form_with model: @partner_status, local: true, class: "space-y-4" do |f| %>
@@ -54,7 +45,7 @@
                   <%= f.number_field :hp_percentage, in: 0..100, step: 10, class: "w-full bg-gray-50 border-0 text-gray-800 text-lg font-bold rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 text-center placeholder-gray-300", placeholder: "80" %>
                 </div>
                 <div class="w-1/2">
-                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">コンディション</label>
+                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">ご様子</label>
                   <%= f.collection_select :mood_id, Mood.all, :id, :name, {}, {class: "w-full bg-gray-50 border-0 text-gray-800 text-sm font-bold rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-blue-500 appearance-none"} %>
                 </div>
               </div>
@@ -139,7 +130,3 @@
       </div> <!-- px-4 end -->
     </div> <!-- max-w-md end -->
 
-    
-
-</body>
-</html>

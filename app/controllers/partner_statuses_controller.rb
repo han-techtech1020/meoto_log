@@ -3,7 +3,7 @@ class PartnerStatusesController < ApplicationController
     @partner_status = current_user.partner_statuses.new(partner_status_params)
 
     if @partner_status.save
-      redirect_to root_path, notice: '妻のHPを更新しました！'
+      redirect_to root_path, notice: '妻のコンディションを更新しました！'
     else
       redirect_to root_path, alert: '更新に失敗しました'
     end
