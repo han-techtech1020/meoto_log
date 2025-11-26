@@ -252,12 +252,12 @@
 
     <!-- メインステータス（数値化エリア） -->
     <div class="status-card">
-      <div class="status-title">現在の妻のHP</div>
+      <div class="status-title">現在の妻のライフポイント</div>
       
       <% if @latest_status.present? %>
         <!-- データがある場合 -->
         <div class="status-score"><%= @latest_status.hp_percentage %>%</div>
-        <div class="status-message">機嫌：<%= @latest_status.mood.name %></div>
+        <div class="status-message">コンディション：<%= @latest_status.mood.name %></div>
         
         <!-- HPバーの長さを動的に変える（style属性を使う） -->
         <div class="status-meter">
@@ -266,23 +266,23 @@
       <% else %>
         <!-- データがまだない場合 -->
         <div class="status-score">-- %</div>
-        <div class="status-message">まずはHPを記録しましょう！</div>
+        <div class="status-message">まずはライフポイントを記録しましょう！</div>
       <% end %>
     </div>
 
     <!-- HP更新フォーム（仮設置） -->
     <% if user_signed_in? %>
       <div style="margin: 20px; padding: 20px; background: white; border-radius: 10px;">
-        <h3>妻のHPを更新する</h3>
+        <h3>妻のライフポイントを更新する</h3>
         <%= form_with model: @partner_status, local: true do |f| %>
           
           <div style="margin-bottom: 10px;">
-            <label>HP (0-100):</label>
+            <label>ライフポイント (0-100):</label>
             <%= f.number_field :hp_percentage, in: 0..100, step: 10, style: "padding: 5px;" %>
           </div>
 
           <div style="margin-bottom: 10px;">
-            <label>機嫌:</label>
+            <label>コンディション:</label>
             <%= f.collection_select :mood_id, Mood.all, :id, :name, {}, {style: "padding: 5px;"} %>
           </div>
 
@@ -425,7 +425,7 @@
                 scoreArea.innerText = `ご機嫌度判定：${data.risk_score}%`;
                 textArea.innerHTML = `
                     <strong>💡 アドバイス：</strong><br>${data.advice}<br><br>
-                    <strong>🗣 模範解答：</strong><br>${data.ai_response}
+                    <strong>🗣 解答例：</strong><br>${data.ai_response}
                 `;
 
                 // 表示する

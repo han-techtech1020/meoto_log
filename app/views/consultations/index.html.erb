@@ -1,7 +1,7 @@
 <!-- app/views/consultations/index.html.erb -->
 
 <div class="max-w-md mx-auto px-4 py-6 sm:max-w-2xl">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">相談履歴ログ</h1>
+  <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">相談ログ</h1>
 
   <% if @consultations.any? %>
     <div class="space-y-4">
@@ -27,12 +27,12 @@
 
             <!-- 相談内容（抜粋） -->
             <p class="text-gray-800 font-medium truncate mb-1">
-              相談: <%= consultation.content %>
+              相談内容: <%= consultation.content %>
             </p>
 
             <!-- AIアドバイス（抜粋） -->
             <p class="text-sm text-gray-600 line-clamp-2">
-              AI: <%= consultation.ai_response %>
+              解答例: <%= consultation.ai_response %>
             </p>
           </div>
         <% end %>
