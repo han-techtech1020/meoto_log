@@ -92,7 +92,40 @@
           <% end %>
         </div>
 
-        <!-- 4. 直近の振り返り -->
+        <!-- 4. 大事な予定 -->
+        <div class="flex items-end mb-3 mt-8">
+          <div class="font-bold text-gray-700 text-lg">🎁 大事な予定</div>
+        </div>
+
+        <div class="space-y-3 mb-10">
+          <% if @important_schedules.present? %>
+            <% @important_schedules.each do |schedule| %>
+              <!-- ここは border-pink-400 などにして特別感を出す -->
+              <div class="bg-white p-4 rounded-xl flex items-center justify-between shadow-sm border-l-4 border-pink-400">
+                <div class="flex items-center gap-4">
+                  <!-- 日付も表示する（記念日は先の日程かもしれないので） -->
+                  <div class="bg-pink-100 text-pink-600 font-bold text-sm px-3 py-1 rounded-md text-center">
+                    <span class="text-xs block"><%= schedule.start_time.strftime("%m/%d") %></span>
+                    <%= schedule.start_time.strftime("%H:%M") %>
+                  </div>
+                  <span class="text-gray-800 font-medium"><%= schedule.title %></span>
+                </div>
+                
+                <%= link_to schedule_path(schedule), data: { turbo_method: :delete }, class: "text-gray-300 hover:text-red-500 p-1" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300">
+              <p class="text-gray-400 text-sm">大事な予定は登録されていません</p>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- 5. 直近の振り返り -->
         <div class="font-bold text-gray-700 text-lg mb-3">📝 直近のログ</div>
         <div class="mb-24">
           <% if @latest_consultation.present? %>
