@@ -38,7 +38,11 @@ class ConsultationsController < ApplicationController
     end
   end
 
-  def show
-    @consultation = current_user.consultations.find(params[:id])
+  def destroy
+    consultation = current_user.consultations.find(params[:id])
+    consultation.destroy
+    
+    # 一覧ページへ戻り、メッセージを表示
+    redirect_to consultations_path, notice: '履歴を削除しました'
   end
 end

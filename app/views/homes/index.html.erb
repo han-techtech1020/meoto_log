@@ -105,7 +105,7 @@
         <div class="font-bold text-gray-700 text-lg mb-3">📝 直近のログ</div>
         <div class="mb-24">
           <% if @latest_consultation.present? %>
-            <%= link_to consultation_path(@latest_consultation), class: "block bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 group" do %>
+            <%= link_to consultations_path, class: "block bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 group" do %>
               <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
                 <span><%= @latest_consultation.created_at.strftime("%m/%d %H:%M") %></span>
                 
