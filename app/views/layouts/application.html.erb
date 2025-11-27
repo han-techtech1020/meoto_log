@@ -9,6 +9,13 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <!-- スマホ用アイコン（Apple Touch Icon） -->
+    <!-- hrefには画像のパスを指定します。今回は仮で「いらすとや」のハートの画像にしています -->
+    <link rel="apple-touch-icon" href="https://1.bp.blogspot.com/-D2WfK-PrJ94/X6tl8yC5QII/AAAAAAABcTU/jF1Zyk6K9r0tLzYlDdyJOtC4LqMKYT6gQCnBGAsYHQ/s180/heart_mark.png">
+  
+    <!-- ▼ ついでにブラウザのタブ用アイコン（Favicon）も設定 -->
+    <link rel="icon" href="https://1.bp.blogspot.com/-D2WfK-PrJ94/X6tl8yC5QII/AAAAAAABcTU/jF1Zyk6K9r0tLzYlDdyJOtC4LqMKYT6gQCnBGAsYHQ/s180/heart_mark.png">
+
   </head>
 
   <body class="bg-gray-50 text-gray-800 font-sans">
@@ -22,19 +29,24 @@
         <% end %>
 
         <!-- 右側のメニュー（ログイン状態で切り替え） -->
-        <div class="text-sm">
+        <div class="flex items-center gap-1"> <!-- gapを少し狭めて一体感を出す -->
           <% if user_signed_in? %>
-            <!-- ユーザー名（クリックで編集へ） -->
-        <%= link_to edit_user_registration_path, class: "flex items-center gap-2 text-gray-600 hover:text-indigo-600 font-bold transition" do %>
-          <!-- 人アイコン -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-          </svg>
-          <%= current_user.nickname %>
-        <% end %>
-        
-            <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-gray-500 hover:text-gray-700" %>
+            
+            <!-- ユーザー名（プロフィール編集） -->
+            <!-- p-2 を追加してタップ領域を広げています -->
+            <%= link_to edit_user_registration_path, class: "flex items-center gap-1 text-gray-600 hover:text-indigo-600 font-bold transition p-2 rounded-lg hover:bg-gray-50 mr-1" do %>
+              <!-- アイコン -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+              </svg>
+              <!-- 名前（長すぎる場合は ... で省略する設定を追加） -->
+              <span class="text-sm max-w-[8rem] truncate"><%= current_user.nickname %></span>
+            <% end %>
+
+            <!-- ログアウトボタン -->
+            <%= link_to "ログアウト", destroy_user_session_path, class: "text-xs text-gray-400 hover:text-red-500 border border-gray-200 px-3 py-1.5 rounded whitespace-nowrap transition" %>
           <% else %>
+          
             <!-- 未ログイン：ログインボタン -->
             <%= link_to "ログイン", new_user_session_path, class: "text-indigo-600 font-bold mr-3" %>
             <%= link_to "新規登録", new_user_registration_path, class: "bg-indigo-600 text-white px-3 py-1.5 rounded-full text-xs font-bold hover:bg-indigo-700" %>
@@ -44,12 +56,18 @@
     </header>
 
     <!-- ▼ フラッシュメッセージ（通知） -->
-    <% if notice %>
-      <p class="bg-blue-50 text-blue-700 px-4 py-2 text-sm text-center"><%= notice %></p>
-    <% end %>
-    <% if alert %>
-      <p class="bg-red-50 text-red-700 px-4 py-2 text-sm text-center"><%= alert %></p>
-    <% end %>
+   <div class="fixed top-16 left-0 right-0 z-50 flex flex-col items-center gap-2 pointer-events-none">
+      <% flash.each do |key, value| %>
+        <% 
+          # 色のデザイン：noticeなら青、alertなら赤
+          color_class = key == 'notice' ? 'bg-blue-500 text-white' : 'bg-red-500 text-white'
+        %>
+        <div data-controller="flash" 
+             class="<%= color_class %> px-6 py-3 rounded-full shadow-lg text-sm font-bold transition-opacity duration-1000 opacity-100 pointer-events-auto">
+          <%= value %>
+        </div>
+      <% end %>
+    </div>
 
     <!-- ▼ メインコンテンツ -->
     <main class="pb-20"> <!-- ボトムナビの分だけ下に余白 -->
