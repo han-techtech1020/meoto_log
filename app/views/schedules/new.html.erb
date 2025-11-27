@@ -3,6 +3,7 @@
 
   <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
     <%= form_with model: @schedule, local: true, class: "space-y-6" do |f| %>
+      <%= render 'shared/error_messages', object: f.object %>
       
       <!-- タイトル入力 -->
       <div>
