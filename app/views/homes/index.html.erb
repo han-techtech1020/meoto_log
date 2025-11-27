@@ -59,20 +59,21 @@
       <!-- コンテンツエリアの余白 -->
       <div class="px-4 mt-8">
         
-        <!-- 3. 本日の予定 -->
+        <!-- 3. これからの予定 -->
         <div class="flex justify-between items-end mb-3">
-          <div class="font-bold text-gray-700 text-lg">📅 本日の予定</div>
+          <div class="font-bold text-gray-700 text-lg">📅 これからの予定</div>
           <%= link_to new_schedule_path, class: "text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition" do %>
             ＋ 追加
           <% end %>
         </div>
 
         <div class="space-y-3 mb-10">
-          <% if @today_schedules.present? %>
-            <% @today_schedules.each do |schedule| %>
+          <% if @upcoming_schedules.present? %> 
+            <% @upcoming_schedules.each do |schedule| %>
               <div class="bg-white p-4 rounded-xl flex items-center justify-between shadow-sm border border-gray-100">
                 <div class="flex items-center gap-4">
-                  <div class="bg-blue-100 text-blue-600 font-bold text-sm px-3 py-1 rounded-md">
+                  <div class="bg-blue-100 text-blue-600 font-bold text-sm px-3 py-1 rounded-md text-center min-w-[3.5rem]">
+                    <span class="text-xs block text-blue-400"><%= schedule.start_time.strftime("%-m/%-d") %></span>
                     <%= schedule.start_time.strftime("%H:%M") %>
                   </div>
                   <span class="text-gray-800 font-medium"><%= schedule.title %></span>
@@ -92,9 +93,9 @@
           <% end %>
         </div>
 
-        <!-- 4. 大事な予定 -->
+        <!-- 4. 大切な日 -->
         <div class="flex items-end mb-3 mt-8">
-          <div class="font-bold text-gray-700 text-lg">🎁 大事な予定</div>
+          <div class="font-bold text-gray-700 text-lg">🎁 大切な日</div>
         </div>
 
         <div class="space-y-3 mb-10">
@@ -120,7 +121,7 @@
             <% end %>
           <% else %>
             <div class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300">
-              <p class="text-gray-400 text-sm">大事な予定は登録されていません</p>
+              <p class="text-gray-400 text-sm">大切な日は登録されていません</p>
             </div>
           <% end %>
         </div>

@@ -4,7 +4,7 @@
   <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
     <%= form_with model: @schedule, local: true, class: "space-y-6" do |f| %>
       <%= render 'shared/error_messages', object: f.object %>
-      
+
       <!-- タイトル入力 -->
       <div>
         <%= f.label :title, "予定の内容", class: "block text-sm font-medium text-gray-700 mb-1" %>
@@ -13,7 +13,7 @@
 
       <!-- 時間入力 -->
       <div>
-        <%= f.label :start_time, "開始日時", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= f.label :start_time, "日時", class: "block text-sm font-medium text-gray-700 mb-1" %>
         <%= f.datetime_field :start_time, class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 border" %>
       </div>
 

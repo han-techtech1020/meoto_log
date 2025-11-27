@@ -1,0 +1,33 @@
+ja:
+  activerecord:
+    models:
+      user: "ユーザー"
+      schedule: "予定"
+      partner_status: "ステータス"
+      consultation: "相談"
+    attributes:
+      user:
+        nickname: "ニックネーム"
+        email: "メールアドレス"
+        password: "パスワード"
+        partner_name: "パートナーの呼び名"
+        partner_personality: "パートナーの性格"
+      schedule:
+        title: "予定の内容"
+        start_time: "日時"
+        is_important: "大事な予定"
+      partner_status:
+        hp_percentage: "ご機嫌度"
+        mood_id: "コンディション"
+      consultation:
+        content: "相談内容"
+  
+  # エラーメッセージ自体の翻訳（rails-i18nが入っていれば一部自動ですが、念のため）
+  errors:
+    messages:
+      blank: "を入力してください"
+      required: "を入力してください"
+      taken: "はすでに使われています"
+      too_short: "は%{count}文字以上にしてください"
+      too_long: "は%{count}文字以下にしてください"
+      invalid: "は不正な値です"
