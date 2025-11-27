@@ -51,12 +51,18 @@
     </header>
 
     <!-- ▼ フラッシュメッセージ（通知） -->
-    <% if notice %>
-      <p class="bg-blue-50 text-blue-700 px-4 py-2 text-sm text-center"><%= notice %></p>
-    <% end %>
-    <% if alert %>
-      <p class="bg-red-50 text-red-700 px-4 py-2 text-sm text-center"><%= alert %></p>
-    <% end %>
+   <div class="fixed top-16 left-0 right-0 z-50 flex flex-col items-center gap-2 pointer-events-none">
+      <% flash.each do |key, value| %>
+        <% 
+          # 色のデザイン：noticeなら青、alertなら赤
+          color_class = key == 'notice' ? 'bg-blue-500 text-white' : 'bg-red-500 text-white'
+        %>
+        <div data-controller="flash" 
+             class="<%= color_class %> px-6 py-3 rounded-full shadow-lg text-sm font-bold transition-opacity duration-1000 opacity-100 pointer-events-auto">
+          <%= value %>
+        </div>
+      <% end %>
+    </div>
 
     <!-- ▼ メインコンテンツ -->
     <main class="pb-20"> <!-- ボトムナビの分だけ下に余白 -->
