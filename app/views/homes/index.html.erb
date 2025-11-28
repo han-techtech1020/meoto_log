@@ -5,7 +5,7 @@
 
       <!-- 1. メインステータス（背景エリアを少し広げて、下部を丸める） -->
       <div class="bg-gradient-to-br from-blue-600 to-blue-400 pt-8 pb-16 px-6 rounded-b-[2.5rem] shadow-md text-white text-center relative z-0">
-        <div class="text-sm opacity-90 mb-1 font-medium tracking-wide">現在の<%= partner_name %>のご機嫌度</div>
+        <div class="text-sm opacity-90 mb-1 font-medium tracking-wide">現在の<%= partner_name %>の体力状態</div>
         
         <% if @latest_status.present? %>
           <!-- スコア表示 -->
@@ -41,7 +41,7 @@
             <%= form_with model: @partner_status, local: true, class: "space-y-4" do |f| %>
               <div class="flex gap-4">
                 <div class="w-1/2">
-                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">ご機嫌度 (0-100)</label>
+                  <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">体力状態 (0-100)</label>
                   <%= f.number_field :hp_percentage, in: 0..100, step: 10, class: "w-full bg-gray-50 border-0 text-gray-800 text-lg font-bold rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 text-center placeholder-gray-300", placeholder: "80" %>
                 </div>
                 <div class="w-1/2">
