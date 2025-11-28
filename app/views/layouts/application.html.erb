@@ -207,6 +207,42 @@
                 `;
 
                 responseArea.classList.remove('hidden');
+
+                // ▼▼▼ 追加：ホーム画面の「直近のログ」も書き換える処理 ▼▼▼
+                const homeScore = document.getElementById('latest-log-score');
+                
+                // もしホーム画面にログ表示エリアがあれば（IDが見つかれば）実行
+                if (homeScore) {
+                    // 1. 日付を「たった今」にする
+                    document.getElementById('latest-log-date').innerText = "たった今";
+
+                    // 2. 内容とAIの返信を更新
+                    document.getElementById('latest-log-content').innerText = input; // 入力した相談内容
+                    document.getElementById('latest-log-response').innerText = data.ai_response;
+
+                    // 3. スコアの色判定と更新
+                    let newColorClass = 'text-red-600 bg-red-50';
+                    if (data.risk_score >= 80) {
+                        newColorClass = 'text-blue-600 bg-blue-50';
+                    } else if (data.risk_score >= 40) {
+                        newColorClass = 'text-yellow-600 bg-yellow-50';
+                    }
+                    
+                    // クラスを全書き換えして色を更新
+                    homeScore.className = `font-bold px-2 py-1 rounded-md ${newColorClass}`;
+                    homeScore.innerText = `ご機嫌度: ${data.risk_score}点`;
+                } else {
+                    // もし「履歴がありません」の表示だった場合は、
+                    // 構造を作るのが大変なので、リロードして最新を表示させる
+                    const noLogMsg = document.getElementById('no-log-message');
+                    if (noLogMsg) {
+                        // モーダルを閉じたタイミングでリロードするようにフラグを立てる等の工夫もできますが
+                        // ここでは簡易的に何もしない（次回リロードで反映）か、
+                        // あるいは location.reload() してしまう手もあります
+                    }
+                }
+                // ▲▲▲ 追加ここまで ▲▲▲
+
             })
             .catch(error => {
                 alert('エラーが発生しました。');
