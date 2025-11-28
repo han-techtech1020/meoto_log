@@ -14,7 +14,7 @@
             <div class="text-xl font-bold mb-2">%</div>
           </div>
           <div class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
-            ご様子：<%= @latest_status.mood&.name || '未設定' %>
+            現在のご様子：<%= @latest_status.mood&.name || '未設定' %>
           </div>
           
           <!-- メーター -->
@@ -151,7 +151,7 @@
               </div>
               
               <div class="flex gap-3 items-start bg-gray-50 p-3 rounded-lg">
-                <div class="text-lg">🤖</div>
+                <div class="text-lg">👼</div>
                 <!-- ▼ ID追加: AIの返信 -->
                 <div id="latest-log-response" class="text-xs text-gray-600 leading-relaxed line-clamp-2">
                   <%= @latest_consultation.ai_response %>
