@@ -115,9 +115,11 @@
             <h3 class="text-lg font-bold text-gray-800 mb-1">AIに相談する</h3>
             <p class="text-xs text-gray-500 mb-6">状況を入力すると、AIが最適な言葉を返します</p>
             
-            <div class="flex gap-2 mb-4">
-                <input type="text" id="userInput" placeholder="例：『ご飯まだ？』と聞いたら怒られた..." class="flex-1 bg-gray-50 border-0 rounded-full px-5 py-4 focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 placeholder-gray-400">
-                <button class="send-btn bg-blue-600 text-white font-bold px-6 rounded-full hover:bg-blue-700 transition shadow-lg shadow-blue-200" onclick="simulateAI()">
+            <div class="flex gap-2 mb-4 items-end">
+                <!-- textareaに変更。rows="1"で初期は1行。resize-noneで手動リサイズ禁止 -->
+                <textarea id="userInput" rows="1" placeholder="例：『ご飯まだ？』と聞いたら怒られた..." class="flex-1 bg-gray-50 border-0 rounded-2xl px-5 py-3 focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 placeholder-gray-400 resize-none overflow-hidden min-h-[50px] max-h-[150px]" oninput="autoResize(this)"></textarea>
+                
+                <button class="send-btn bg-blue-600 text-white font-bold px-4 py-3 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200 h-[50px] flex items-center justify-center" onclick="simulateAI()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
@@ -138,6 +140,12 @@
     </div>
 
     <script>
+        // テキストエリアの高さを自動調整する関数 
+        function autoResize(textarea) {
+            textarea.style.height = 'auto'; // 一度リセット
+            textarea.style.height = textarea.scrollHeight + 'px'; // 文字量に合わせて高さを設定
+        }
+
         // モーダルを開く
         window.openModal = function() { 
             const modal = document.getElementById('modal');
@@ -145,8 +153,11 @@
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.getElementById('aiResponse').classList.add('hidden'); 
-            document.getElementById('userInput').value = ''; 
-            // 入力欄にフォーカス
+            
+            const input = document.getElementById('userInput');
+            input.value = ''; 
+            input.style.height = 'auto'; // 高さを初期状態に戻す
+            
             setTimeout(() => document.getElementById('userInput').focus(), 100);
         }
 
@@ -183,7 +194,7 @@
                 const scoreArea = responseArea.querySelector('.ai-score');
                 const textArea = responseArea.querySelector('p');
 
-                // 1. 点数に応じて「色」を決める
+                // 1. %に応じて「色」を決める
                 let scoreColor = 'text-red-500'; 
                 if (data.risk_score >= 80) {
                     scoreColor = 'text-blue-600'; 
@@ -193,7 +204,7 @@
 
                 // 2. クラスを適用
                 scoreArea.className = `ai-score font-bold ${scoreColor} mb-2`;
-                scoreArea.innerText = `予想されるご機嫌度：${data.risk_score}点`;
+                scoreArea.innerText = `予想されるご機嫌度：${data.risk_score}%`;
                 
                 textArea.innerHTML = `
                     <div class="mb-3">
@@ -230,7 +241,7 @@
                     
                     // クラスを全書き換えして色を更新
                     homeScore.className = `font-bold px-2 py-1 rounded-md ${newColorClass}`;
-                    homeScore.innerText = `ご機嫌度: ${data.risk_score}点`;
+                    homeScore.innerText = `ご機嫌度: ${data.risk_score}%`;
                 } else {
                     // もし「履歴がありません」の表示だった場合は、
                     // 構造を作るのが大変なので、リロードして最新を表示させる
