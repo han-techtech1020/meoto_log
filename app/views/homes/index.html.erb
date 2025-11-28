@@ -14,7 +14,7 @@
             <div class="text-xl font-bold mb-2">%</div>
           </div>
           <div class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
-            ご様子：<%= @latest_status.mood.name %>
+            ご様子：<%= @latest_status.mood&.name || '未設定' %>
           </div>
           
           <!-- メーター -->
