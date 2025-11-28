@@ -46,7 +46,7 @@
                 </div>
                 <div class="w-1/2">
                   <label class="block text-xs font-bold text-gray-500 mb-1 ml-1">ご様子</label>
-                  <%= f.collection_select :mood_id, Mood.all, :id, :name, {}, {class: "w-full bg-gray-50 border-0 text-gray-800 text-sm font-bold rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-blue-500 appearance-none"} %>
+                  <%= f.collection_select :mood_id, Mood.all, :id, :name, {include_blank: '-- 選択 --' }, {class: "w-full bg-gray-50 border-0 text-gray-800 text-sm font-bold rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-blue-500 appearance-none"} %>
                 </div>
               </div>
 
