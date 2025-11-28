@@ -19,6 +19,7 @@ ja:
       partner_status:
         hp_percentage: "ご機嫌度"
         mood_id: "コンディション"
+        user: "ユーザー"
       consultation:
         content: "相談内容"
   
