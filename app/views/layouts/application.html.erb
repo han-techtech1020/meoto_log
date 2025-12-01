@@ -109,12 +109,12 @@
             <!-- ハンドルバー -->
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
             
-            <h3 class="text-lg font-bold text-gray-800 mb-1">天使に相談する</h3>
-            <p class="text-xs text-gray-500 mb-6">状況を入力すると、天使が最適な言葉を返します</p>
+            <h3 class="text-lg font-bold text-gray-800 mb-1">🦉フクロウに相談する</h3>
+            <p class="text-xs text-gray-500 mb-6">状況を入力すると、フクロウが最適な言葉を返します</p>
             
             <div class="flex gap-2 mb-4 items-end">
                 <!-- textareaに変更。rows="1"で初期は1行。resize-noneで手動リサイズ禁止 -->
-                <textarea id="userInput" rows="1" placeholder="例：『ご飯まだ？』と聞いたら怒られた..." class="flex-1 bg-gray-50 border-0 rounded-2xl px-5 py-3 focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 placeholder-gray-400 resize-none overflow-hidden min-h-[50px] max-h-[150px]" oninput="autoResize(this)"></textarea>
+                <textarea id="userInput" rows="1" class="flex-1 bg-gray-50 border-0 rounded-2xl px-5 py-3 focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 placeholder-gray-400 resize-none overflow-hidden min-h-[50px] max-h-[150px]" oninput="autoResize(this)"></textarea>
                 
                 <button class="send-btn bg-blue-600 text-white font-bold px-4 py-3 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200 h-[50px] flex items-center justify-center" onclick="simulateAI()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -209,7 +209,7 @@
                         <div class="mt-1">${data.advice}</div>
                     </div>
                     <div>
-                        <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">👼 おすすめメッセージ</span>
+                        <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">おすすめメッセージ</span>
                         <div class="mt-1 font-bold text-gray-800">"${data.ai_response}"</div>
                     </div>
                 `;

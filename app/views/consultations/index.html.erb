@@ -34,7 +34,6 @@
             
             <!-- 相談内容（常に表示） -->
             <div class="flex items-start gap-2 mb-2">
-              <span class="text-lg">🤔</span>
               <p class="text-gray-800 font-bold text-sm leading-relaxed">
                 <%= consultation.content %>
               </p>
@@ -43,7 +42,7 @@
             <!-- AIの回答（初期状態は隠す・または一部表示） -->
             <!-- closed-content: 閉じてる時（1行だけ表示） -->
             <div class="closed-content flex items-center gap-2 mt-2 opacity-70">
-              <span class="text-lg">👼</span>
+              <span class="text-lg">😌</span>
               <p class="text-xs text-gray-600 line-clamp-1">
                 <%= consultation.ai_response %>
               </p>
@@ -52,7 +51,7 @@
             <!-- open-content: 開いた時（全部表示） -->
             <div class="open-content hidden mt-3 bg-blue-50 p-3 rounded-lg border border-blue-100 animate-fade-in">
               <div class="flex gap-2 mb-1">
-                <span class="text-lg">👼</span>
+                <span class="text-lg">😌</span>
                 <span class="text-xs font-bold text-blue-600 mt-1">おすすめメッセージ</span>
               </div>
               <div class="mt-2 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap text-left"><%= consultation.ai_response %></div>
