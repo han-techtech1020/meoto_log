@@ -9,8 +9,7 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <!-- スマホ用アイコン（Apple Touch Icon） -->
-    <!-- hrefには画像のパスを指定します。今回は仮で「いらすとや」のハートの画像にしています -->
+    <!-- アイコン -->
     <link rel="icon" href="/penguin.png" type="image/png">
     <link rel="apple-touch-icon" href="/penguin.png">
   </head>
@@ -21,7 +20,7 @@
     <header class="bg-white shadow-sm sticky top-0 z-50">
       <div class="w-full max-w-6xl mx-auto px-4 h-14 flex justify-between items-center">
         <!-- ロゴ -->
-        <%= link_to root_path, class: "font-bold text-lg md:text-xl text-indigo-600 tracking-tight whitespace-nowrap" do %>
+        <%= link_to root_path, class: "font-bold text-lg md:text-3xl text-indigo-600 tracking-tight whitespace-nowrap" do %>
           Meoto-Log
         <% end %>
 

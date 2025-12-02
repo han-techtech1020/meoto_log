@@ -108,11 +108,16 @@
               <div class="bg-white p-4 rounded-xl flex items-center justify-between shadow-sm border-l-4 border-pink-400">
                 <div class="flex items-center gap-4">
                   <!-- 日付も表示する（記念日は先の日程かもしれないので） -->
-                  <div class="bg-pink-100 text-pink-600 font-bold text-sm px-3 py-1 rounded-md text-center">
-                    <span class="text-xs block"><%= schedule.start_time.strftime("%m/%d") %></span>
-                    <%= schedule.start_time.strftime("%H:%M") %>
-                  </div>
-                  <span class="text-gray-800 font-medium"><%= schedule.title %></span>
+                   <div class="bg-pink-50 text-pink-600 px-3 py-2 rounded-lg text-center min-w-[4rem] border border-pink-100">
+                <!-- 日付（大きく） -->
+                <span class="block text-lg font-extrabold leading-none mb-1">
+                  <%= schedule.start_time.strftime("%-m/%-d") %>
+                </span>
+                <!-- 時間（小さく） -->
+                <span class="block text-[10px] font-medium text-pink-400">
+                  <%= schedule.start_time.strftime("%H:%M") %>
+                </span>
+              </div>
                 </div>
                 
                 <%= link_to schedule_path(schedule), data: { turbo_method: :delete, turbo_confirm: "大切な日を削除しますか？" }, class: "text-gray-300 hover:text-red-500 p-1" do %>
