@@ -44,6 +44,9 @@
             <%= link_to "ログアウト", destroy_user_session_path, class: "text-xs text-gray-400 hover:text-red-500 border border-gray-200 px-3 py-1.5 rounded whitespace-nowrap transition" %>
           <% else %>
           
+            <!-- ゲストログインボタン -->
+            <%= link_to 'ゲストログイン', users_guest_sign_in_path, data: { turbo_method: :post }, class: "bg-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-bold hover:bg-orange-600 whitespace-nowrap mr-2" %>
+
             <!-- 未ログイン：ログインボタン -->
             <%= link_to "ログイン", new_user_session_path, class: "text-indigo-600 font-bold mr-3" %>
             <%= link_to "新規登録", new_user_registration_path, class: "bg-indigo-600 text-white px-3 py-1.5 rounded-full text-xs font-bold hover:bg-indigo-700" %>
@@ -216,7 +219,7 @@
 
                 responseArea.classList.remove('hidden');
 
-                // ▼▼▼ 追加：ホーム画面の「直近のログ」も書き換える処理 ▼▼▼
+                // ホーム画面の「直近のログ」も書き換える処理 
                 const homeScore = document.getElementById('latest-log-score');
                 
                 // もしホーム画面にログ表示エリアがあれば（IDが見つかれば）実行
