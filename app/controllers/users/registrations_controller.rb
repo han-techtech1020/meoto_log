@@ -9,7 +9,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # パスワードなしで更新できるようにする魔法のメソッド
   def update_resource(resource, params)
     # 「ゲストユーザー」の場合
-    if resource.email == 'guest@example.com'
+    if resource.email.start_with?('guest_')
       # パスワードなしで更新を許可する
       resource.update_without_password(params)
     else
