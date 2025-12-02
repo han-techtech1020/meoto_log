@@ -62,8 +62,11 @@
         <!-- 3. これからの予定 -->
         <div class="flex justify-between items-end mb-3">
           <div class="font-bold text-gray-700 text-lg">📅 これからの予定</div>
-          <%= link_to new_schedule_path, class: "text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition" do %>
+          <!-- ▼▼▼ 修正：ログインしている時だけ表示 ▼▼▼ -->
+          <% if user_signed_in? %>
+            <%= link_to new_schedule_path, class: "text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition" do %>
             ＋ 追加
+            <% end %>
           <% end %>
         </div>
 
