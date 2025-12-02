@@ -28,11 +28,15 @@ class ConsultationsController < ApplicationController
     )
 
     if @consultation.save
+      new_status = update_partner_status_automatically(@consultation.risk_score) # 自動更新ロジック
+
       # 5. 成功したら、画面（JavaScript）にデータを返す
       render json: {
         ai_response: @consultation.ai_response,
         risk_score: @consultation.risk_score,
-        advice: response_data['advice'] # アドバイスも画面には表示したいので返す
+        advice: response_data['advice'], # アドバイスも画面には表示したいので返す
+        new_hp: new_status.hp_percentage,
+        new_mood: new_status.mood.name
       }
     else
       render json: { error: '保存に失敗しました' }, status: :unprocessable_entity
@@ -45,5 +49,39 @@ class ConsultationsController < ApplicationController
 
     # 一覧ページへ戻り、メッセージを表示
     redirect_to consultations_path, notice: '履歴を削除しました'
+  end
+
+  private
+
+  # HP自動計算メソッド
+  def update_partner_status_automatically(mood_score)
+    # 1. 時間によるベースHP算出 (100 - 時間*3)
+    # 例: 朝8時=76, 昼12時=64, 夜20時=40
+    current_hour = Time.current.hour
+    base_hp = 100 - (current_hour * 3)
+
+    # 2. ご機嫌度(mood_score)による補正
+    # 50点を基準に、良ければプラス、悪ければマイナス
+    # 例: 80点なら +15, 20点なら -15
+    mood_impact = (mood_score - 50) / 2
+
+    # 3. 合算 (0〜100の範囲に収める)
+    final_hp = (base_hp + mood_impact).clamp(0, 100)
+
+    # 4. コンディション(mood_id)の自動選択
+    # 1:最高, 2:普通, 3:不機嫌, 4:激怒 と仮定
+    estimated_mood_id = case mood_score
+                        when 80..100 then 1 # 最高
+                        when 60..79  then 2 # 普通
+                        when 40..59  then 3 # やや不機嫌
+                        when 20..39  then 4 # 不機嫌
+                        else              5 # 不機嫌
+                        end
+
+    # 5. 保存
+    current_user.partner_statuses.create(
+      hp_percentage: final_hp,
+      mood_id: estimated_mood_id
+    )
   end
 end

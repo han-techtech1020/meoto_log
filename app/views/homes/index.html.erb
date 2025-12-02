@@ -10,16 +10,17 @@
         <% if @latest_status.present? %>
           <!-- スコア表示 -->
           <div class="flex justify-center items-end gap-1 mb-2">
-            <div class="text-6xl font-extrabold tracking-tighter"><%= @latest_status.hp_percentage %></div>
+            <div id="hp-value" class="text-6xl font-extrabold tracking-tighter"><%= @latest_status.hp_percentage %></div>
             <div class="text-xl font-bold mb-2">%</div>
           </div>
+
           <div class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-bold backdrop-blur-sm">
-            現在のご様子：<%= @latest_status.mood&.name || '未設定' %>
+            現在のご様子：<span id="mood-text"><%= @latest_status.mood&.name || '未設定' %></span>
           </div>
           
           <!-- メーター -->
           <div class="mt-6 bg-black/20 h-3 rounded-full overflow-hidden w-full max-w-xs mx-auto">
-            <div class="bg-yellow-400 h-full shadow-[0_0_10px_rgba(250,204,21,0.5)] transition-all duration-1000 ease-out" style="width: <%= @latest_status.hp_percentage %>%;"></div>
+            <div id="hp-bar" class="bg-yellow-400 h-full shadow-[0_0_10px_rgba(250,204,21,0.5)] transition-all duration-1000 ease-out" style="width: <%= @latest_status.hp_percentage %>%;"></div>
           </div>
         <% else %>
           <div class="text-4xl font-bold my-6 text-white/50">-- %</div>

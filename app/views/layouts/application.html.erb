@@ -237,6 +237,23 @@
                 const logContainer = document.getElementById('latest-log-container');
                 const noLogMsg = document.getElementById('no-log-message');
                 
+                // HPメーターの自動更新処理 
+                const hpValue = document.getElementById('hp-value');
+                const hpBar = document.getElementById('hp-bar');
+                const moodText = document.getElementById('mood-text');
+
+                // (A) メーターが画面にある場合：JSでヌルッと動かす
+                if (hpValue && data.new_hp !== undefined) {
+                    hpValue.innerText = data.new_hp;
+                    if (hpBar) hpBar.style.width = data.new_hp + '%';
+                    if (moodText && data.new_mood) moodText.innerText = data.new_mood;
+                } 
+                // (B) メーターがない場合（初回）：リロードして表示させる
+                else if (data.new_hp !== undefined) {
+                    window.location.reload();
+                    return; // リロードするなら後の処理は不要なのでここで終了
+                }
+
                 // コンテナがあれば処理開始
                 if (logContainer) {
                     
@@ -274,7 +291,11 @@
                         scoreEl.className = `font-bold px-2 py-1 rounded-md ${newColorClass}`;
                         scoreEl.innerText = `ご機嫌度: ${score}%`;
                     }
-                } 
+                } else {
+                    // 履歴カードがない場合（＝初めての相談）は、
+                    // 画面をリロードして、サーバーから最新の画面を取得して表示する
+                    window.location.reload();
+                }
               }
             )
             .catch(error => {
