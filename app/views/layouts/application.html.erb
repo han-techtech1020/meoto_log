@@ -154,6 +154,8 @@
     </div>
 
     <script>
+        let hasConsulted = false;
+        let needsReload = false;
         // テキストエリアの高さを自動調整する関数 
         function autoResize(textarea) {
             textarea.style.height = 'auto'; // 一度リセット
@@ -181,6 +183,20 @@
                 const modal = document.getElementById('modal');
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
+                // リロード条件を整理 
+                
+                // 1. 相談ログ画面で相談した後ならリロード
+                if (hasConsulted && window.location.pathname === '/consultations') {
+                    window.location.reload();
+                }
+                // 2. データなし（初回）で相談した後ならリロード（ホーム画面など）
+                else if (needsReload) {
+                    window.location.reload();
+                }
+                
+                // フラグをリセット
+                hasConsulted = false;
+                needsReload = false;
             }
         }
 
@@ -250,8 +266,7 @@
                 } 
                 // (B) メーターがない場合（初回）：リロードして表示させる
                 else if (data.new_hp !== undefined) {
-                    window.location.reload();
-                    return; // リロードするなら後の処理は不要なのでここで終了
+                    needsReload = true;
                 }
 
                 // コンテナがあれば処理開始
@@ -292,9 +307,7 @@
                         scoreEl.innerText = `ご機嫌度: ${score}%`;
                     }
                 } else {
-                    // 履歴カードがない場合（＝初めての相談）は、
-                    // 画面をリロードして、サーバーから最新の画面を取得して表示する
-                    window.location.reload();
+                    needsReload = true;
                 }
               }
             )
