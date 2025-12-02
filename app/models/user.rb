@@ -18,4 +18,19 @@ class User < ApplicationRecord
       # もし性格なども入れたければここに追加できます
     end
   end
+
+  # ゲストのデータを真っさらにする機能
+  def reset_guest_data
+    # 関連データを全て削除 (dependent: :destroyを設定していればuser.destroyでもいいですが、アカウントは残す方針なので中身だけ消します)
+    consultations.destroy_all
+    schedules.destroy_all
+    partner_statuses.destroy_all
+
+    # 名前や性格を初期値に戻す
+    update!(
+      nickname: 'ゲストさん',
+      partner_name: '奥さん',
+      partner_personality: nil
+    )
+  end
 end

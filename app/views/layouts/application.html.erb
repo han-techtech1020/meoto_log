@@ -87,7 +87,7 @@
         <% end %>
 
         <!-- 相談する（真ん中の目立つボタン） -->
-       <%= link_to "#", onclick: "if(window.openModal){window.openModal();return false;} else {window.location.href='/'}", class: "flex flex-col items-center w-full relative group z-50" do %>
+       <%= link_to "#", onclick: "window.openModal(); return false;", class: "flex flex-col items-center w-full relative group z-50" do %>
   <div class="bg-indigo-600 text-white rounded-full p-3 absolute -top-6 border-4 border-white shadow-lg group-hover:bg-indigo-700 transition">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
@@ -220,41 +220,49 @@
                 responseArea.classList.remove('hidden');
 
                 // ホーム画面の「直近のログ」も書き換える処理 
-                const homeScore = document.getElementById('latest-log-score');
+                const logContainer = document.getElementById('latest-log-container');
+                const noLogMsg = document.getElementById('no-log-message');
                 
-                // もしホーム画面にログ表示エリアがあれば（IDが見つかれば）実行
-                if (homeScore) {
-                    // 1. 日付を「たった今」にする
-                    document.getElementById('latest-log-date').innerText = "たった今";
-
-                    // 2. 内容とAIの返信を更新
-                    document.getElementById('latest-log-content').innerText = input; // 入力した相談内容
-                    document.getElementById('latest-log-response').innerText = data.ai_response;
-
-                    // 3. スコアの色判定と更新
-                    let newColorClass = 'text-red-600 bg-red-50';
-                    if (data.risk_score >= 80) {
-                        newColorClass = 'text-blue-600 bg-blue-50';
-                    } else if (data.risk_score >= 40) {
-                        newColorClass = 'text-yellow-600 bg-yellow-50';
-                    }
+                // コンテナがあれば処理開始
+                if (logContainer) {
                     
-                    // クラスを全書き換えして色を更新
-                    homeScore.className = `font-bold px-2 py-1 rounded-md ${newColorClass}`;
-                    homeScore.innerText = `ご機嫌度: ${data.risk_score}%`;
-                } else {
-                    // もし「履歴がありません」の表示だった場合は、
-                    // 構造を作るのが大変なので、リロードして最新を表示させる
-                    const noLogMsg = document.getElementById('no-log-message');
-                    if (noLogMsg) {
-                        // モーダルを閉じたタイミングでリロードするようにフラグを立てる等の工夫もできますが
-                        // ここでは簡易的に何もしない（次回リロードで反映）か、
-                        // あるいは location.reload() してしまう手もあります
+                    // 1. 表示/非表示の切り替え
+                    if (noLogMsg && !noLogMsg.classList.contains('hidden')) {
+                        noLogMsg.classList.add('hidden');
                     }
-                }
-                // ▲▲▲ 追加ここまで ▲▲▲
+                    if (logContainer.classList.contains('hidden')) {
+                        logContainer.classList.remove('hidden');
+                    }
 
-            })
+                    // 2. 中身の書き換え（要素があるか確認してから実行！）
+                    const dateEl = document.getElementById('latest-log-date');
+                    if (dateEl) dateEl.innerText = "たった今";
+
+                    const contentEl = document.getElementById('latest-log-content');
+                    if (contentEl) contentEl.innerText = input;
+
+                    const responseEl = document.getElementById('latest-log-response');
+                    if (responseEl) responseEl.innerText = data.ai_response;
+
+                    // 3. スコアと色の更新
+                    const scoreEl = document.getElementById('latest-log-score');
+                    if (scoreEl) {
+                        let newColorClass = 'text-red-600 bg-red-50'; // デフォルト赤
+                        // 数値として比較
+                        const score = Number(data.risk_score);
+                        
+                        if (score >= 80) {
+                            newColorClass = 'text-blue-600 bg-blue-50';
+                        } else if (score >= 40) {
+                            newColorClass = 'text-yellow-600 bg-yellow-50';
+                        }
+                        
+                        scoreEl.className = `font-bold px-2 py-1 rounded-md ${newColorClass}`;
+                        scoreEl.innerText = `ご機嫌度: ${score}%`;
+                    }
+                } 
+              }
+            )
             .catch(error => {
                 alert('エラーが発生しました。');
                 console.error(error);

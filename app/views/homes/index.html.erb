@@ -129,42 +129,45 @@
         <!-- 5. 直近の振り返り -->
         <div class="font-bold text-gray-700 text-lg mb-3">📝 直近のログ</div>
         <div class="mb-24">
-          <% if @latest_consultation.present? %>
-            <!-- ▼ ID追加: リンク先も書き換えたいのでIDを振る -->
-            <%= link_to consultations_path, id: "latest-log-link", class: "block bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 group" do %>
-              <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
-                <!-- ▼ ID追加: 日付 -->
-                <span id="latest-log-date"><%= @latest_consultation.created_at.strftime("%m/%d %H:%M") %></span>
+
+          <!-- ▼▼▼ 1. ログ表示用カード（ID: latest-log-container） ▼▼▼ -->
+          <!-- データがない場合は hidden クラスをつけて隠しておく -->
+          <%= link_to consultations_path, id: "latest-log-container", class: "block bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 group #{@latest_consultation.present? ? '' : 'hidden'}" do %>
+            <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
+              <!-- 日付 -->
+              <span id="latest-log-date">
+                <%= @latest_consultation&.created_at&.strftime("%m/%d %H:%M") || "たった今" %>
+              </span>
                 
-                <% score = @latest_consultation.risk_score
+                <% score = @latest_consultation&.risk_score || 0
                   color = score >= 80 ? 'text-blue-600 bg-blue-50' : (score >= 40 ? 'text-yellow-600 bg-yellow-50' : 'text-red-600 bg-red-50') 
                 %>
-                <!-- ▼ ID追加: スコア -->
+                <!-- スコア -->
                 <span id="latest-log-score" class="font-bold px-2 py-1 rounded-md <%= color %>">
                   ご機嫌度: <%= score %>%
                 </span>
               </div>
               
-              <!-- ▼ ID追加: 相談内容 -->
+              <!-- 相談内容 -->
               <div id="latest-log-content" class="text-gray-800 font-bold mb-3 line-clamp-1 group-hover:text-blue-600 transition">
-                <%= @latest_consultation.content %>
+                <%= @latest_consultation&.content %>
               </div>
               
               <div class="flex gap-3 items-start bg-gray-50 p-3 rounded-lg">
                 <div class="text-lg">😌</div>
-                <!-- ▼ ID追加: AIの返信 -->
+                <!-- AIの返信 -->
                 <div id="latest-log-response" class="text-xs text-gray-600 leading-relaxed line-clamp-2">
-                  <%= @latest_consultation.ai_response %>
+                  <%= @latest_consultation&.ai_response %>
                 </div>
               </div>
             <% end %>
-          <% else %>
-            <!-- 履歴がない場合（書き換え用IDを振っておく箱を用意するなどの工夫が必要ですが、今回はリロード対応にします） -->
-            <div id="no-log-message" class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300">
+
+            <!-- ▼▼▼ 2. データなしメッセージ（ID: no-log-message） ▼▼▼ -->
+            <!-- データがある場合は hidden クラスをつけて隠しておく -->
+            <div id="no-log-message" class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300 <%= @latest_consultation.present? ? 'hidden' : '' %>">
               <p class="text-gray-400 text-sm">履歴がありません</p>
               <p class="text-xs text-gray-400 mt-1">下のボタンから相談してみましょう</p>
             </div>
-          <% end %>
         </div>
 
       </div> <!-- px-4 end -->
