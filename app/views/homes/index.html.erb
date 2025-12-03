@@ -1,3 +1,4 @@
+<% if user_signed_in? %>
     <% partner_name = current_user&.partner_name.presence || '妻' %>
 
     <!-- ▼▼ 全体をスマホ幅（max-w-md）に制限して中央寄せにするコンテナ ▼▼ -->
@@ -183,3 +184,62 @@
       </div> <!-- px-4 end -->
     </div> <!-- max-w-md end -->
 
+<% else %>
+  <!-- ▼▼▼▼▼ ログアウト時（LP・紹介ページ） ▼▼▼▼▼ -->
+  
+  <div class="bg-gray-50 min-h-screen flex flex-col justify-center items-center px-4 py-12">
+    <!-- タイトルエリア -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-indigo-600 mb-2 tracking-tight">Meoto-Log</h1>
+      <p class="text-gray-500 text-sm font-bold">妻の気持ちに寄り添おう。</p>
+    </div>
+
+    <!-- 機能紹介カード (3つ並べる) -->
+    <div class="grid gap-4 w-full max-w-md mb-10">
+      
+      <!-- Feature 1 -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm flex items-center gap-4">
+        <div class="bg-blue-100 p-3 rounded-full text-2xl">🤖</div>
+        <div>
+          <h3 class="font-bold text-gray-800">AIに相談</h3>
+          <p class="text-xs text-gray-500">妻への言葉をAIが提案。<br>伝え方をアドバイスします。</p>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm flex items-center gap-4">
+        <div class="bg-yellow-100 p-3 rounded-full text-2xl">🔋</div>
+        <div>
+          <h3 class="font-bold text-gray-800">ご機嫌・体力可視化</h3>
+          <p class="text-xs text-gray-500">妻の今の状態を数値化。<br>話しかけるタイミングを間違えません。</p>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm flex items-center gap-4">
+        <div class="bg-pink-100 p-3 rounded-full text-2xl">🎁</div>
+        <div>
+          <h3 class="font-bold text-gray-800">大切な日を管理</h3>
+          <p class="text-xs text-gray-500">記念日や予定を共有。<br>うっかり忘れを未然に防ぎます。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- アクションボタンエリア -->
+    <div class="w-full max-w-sm space-y-4">
+      
+      <!-- ゲストログイン（一番目立たせる！） -->
+      <%= button_to users_guest_sign_in_path, class: "w-full bg-orange-500 text-white font-bold py-4 rounded-full shadow-lg hover:bg-orange-600 transition flex justify-center items-center gap-2 transform hover:scale-105" do %>
+        <span>🚀 ゲストログインで試す</span>
+      <% end %>
+      <p class="text-xs text-center text-gray-400">登録なしで、すぐに全機能を体験できます</p>
+
+      <div class="pt-4 flex gap-4 justify-center">
+        <%= link_to "ログイン", new_user_session_path, class: "text-indigo-600 font-bold text-sm hover:underline" %>
+        <span class="text-gray-300">|</span>
+        <%= link_to "新規登録", new_user_registration_path, class: "text-indigo-600 font-bold text-sm hover:underline" %>
+      </div>
+    </div>
+  </div>
+
+<% end %>
