@@ -119,6 +119,7 @@
                         <%= schedule.start_time.strftime("%H:%M") %>
                       </span>
                     </div>
+                    <span class="text-gray-800 font-bold text-lg ml-2"><%= schedule.title %></span>
                 </div>
                 
                 <%= link_to schedule_path(schedule), data: { turbo_method: :delete, turbo_confirm: "大切な日を削除しますか？" }, class: "text-gray-300 hover:text-red-500 p-1" do %>
