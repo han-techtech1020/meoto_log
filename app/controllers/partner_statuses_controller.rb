@@ -5,7 +5,7 @@ class PartnerStatusesController < ApplicationController
     name = current_user.partner_name.presence || '妻'
 
     if @partner_status.save
-      redirect_to root_path, notice: "#{name}のコンディションを更新しました！"
+      redirect_to root_path, notice: "#{name}のコンディションを変更しました！"
     else
       redirect_to root_path, alert: 'コンディションを入力してください'
     end
