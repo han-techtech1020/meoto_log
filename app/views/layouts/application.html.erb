@@ -224,7 +224,7 @@
                 const scoreArea = responseArea.querySelector('.ai-score');
                 const textArea = responseArea.querySelector('p');
 
-                // 1. %に応じて「色」を決める
+                // 1. 点に応じて「色」を決める
                 let scoreColor = 'text-red-500'; 
                 if (data.risk_score >= 80) {
                     scoreColor = 'text-blue-600'; 
@@ -234,7 +234,7 @@
 
                 // 2. クラスを適用
                 scoreArea.className = `ai-score font-bold ${scoreColor} mb-2`;
-                scoreArea.innerText = `予想されるご機嫌度：${data.risk_score}%`;
+                scoreArea.innerText = `予想されるご機嫌度：${data.risk_score}点`;
                 
                 textArea.innerHTML = `
                     <div class="mb-3">
@@ -304,7 +304,7 @@
                         }
                         
                         scoreEl.className = `font-bold px-2 py-1 rounded-md ${newColorClass}`;
-                        scoreEl.innerText = `ご機嫌度: ${score}%`;
+                        scoreEl.innerText = `ご機嫌度: ${score}点`;
                     }
                 } else {
                     needsReload = true;
