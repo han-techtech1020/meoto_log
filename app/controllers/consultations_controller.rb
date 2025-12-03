@@ -55,10 +55,20 @@ class ConsultationsController < ApplicationController
 
   # HP自動計算メソッド
   def update_partner_status_automatically(mood_score)
-    # 1. 時間によるベースHP算出 (100 - 時間*3)
-    # 例: 朝8時=76, 昼12時=64, 夜20時=40
+    # 1. 時間によるベースHP算出ロジック
     current_hour = Time.current.hour
-    base_hp = 100 - (current_hour * 3)
+    # 基準：朝7時起床とする
+    base_hp = if current_hour >= 7
+                # 【日中〜夜 (07:00 〜 23:59)】
+                # 7時からの経過時間 × 5 を引く
+                # 例: 7時=100, 12時=75, 19時=40, 23時=20
+                elapsed_hours = current_hour - 7
+                100 - (elapsed_hours * 5)
+              else
+                # 【深夜〜早朝 (00:00 〜 06:59)】
+                # 基本的に寝ているか、起きていても疲れている時間帯なので低めに固定
+                20
+              end
 
     # 2. ご機嫌度(mood_score)による補正
     # 50点を基準に、良ければプラス、悪ければマイナス
@@ -72,9 +82,9 @@ class ConsultationsController < ApplicationController
     # 1:最高, 2:普通, 3:不機嫌, 4:激怒 と仮定
     estimated_mood_id = case mood_score
                         when 80..100 then 1 # 最高
-                        when 60..79  then 2 # 普通
-                        when 40..59  then 3 # やや不機嫌
-                        when 20..39  then 4 # 不機嫌
+                        when 60..79  then 2 # 良い
+                        when 40..59  then 3 # 普通
+                        when 20..39  then 4 # やや不機嫌
                         else              5 # 不機嫌
                         end
 
