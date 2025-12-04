@@ -13,6 +13,12 @@
 ## 3. URL
 [https://meoto-log.onrender.com]
 
+**※Basic認証を導入しています**
+- **ID:** meoto
+- **Pass:** 1122
+
+（ゲストログイン機能があるため、上記入力後は「ゲストログイン」ボタンからすぐに試用可能です）
+
 ## 4. 主な機能
 ### 🤖 AI相談機能（心臓部）
 ![Image](https://github.com/user-attachments/assets/2208a971-bfdd-41d9-aa2a-cd2ce37b45f8)
