@@ -15,13 +15,13 @@
 
 ## 4. 主な機能
 ### 🤖 AI相談機能（心臓部）
-![Image](https://github.com/user-attachments/assets/d9c553dc-9292-4480-a4b0-08a10206473d)
+![Image](https://github.com/user-attachments/assets/2208a971-bfdd-41d9-aa2a-cd2ce37b45f8)
 - **LINE風チャットUI**: いつでもどこでも、ボトムナビから即座にAIに相談可能。
 - **ご機嫌度スコアリング**: 自分の発言が妻の機嫌をどうさせるか、0〜100点で採点。
 - **パートナー性格設定**: 「せっかち」「共感重視」など、パートナーの性格を登録することで、AIのアドバイスがパーソナライズされます。
 
 ### 📊 ダッシュボード（ホーム画面）
-![Image](https://github.com/user-attachments/assets/2208a971-bfdd-41d9-aa2a-cd2ce37b45f8)
+![Image](https://github.com/user-attachments/assets/d9c553dc-9292-4480-a4b0-08a10206473d)
 - **妻のHP可視化**: 現在の体力を数値化し、ひと目でコンディションを判断。
 - **予定管理**: 「今日の予定」と「大事な日（記念日など）」を分けて表示し、うっかり忘れを防止。
 - **直近ログ**: 相談した結果をホーム画面で即座に確認可能。
