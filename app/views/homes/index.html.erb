@@ -6,11 +6,12 @@
 
       <!-- 1. メインステータス（背景エリアを少し広げて、下部を丸める） -->
       <div class="bg-gradient-to-br from-blue-600 to-blue-400 pt-8 pb-16 px-6 rounded-b-[2.5rem] shadow-md text-white text-center relative z-0">
-        <div class="text-sm opacity-90 mb-1 font-medium tracking-wide">現在の<%= partner_name %>の体力状態</div>
+        <div class="text-sm opacity-90 mb-1 font-medium tracking-wide">現在の<%= partner_name %>のコンディション</div>
         
         <% if @latest_status.present? %>
           <!-- スコア表示 -->
           <div class="flex justify-center items-end gap-1 mb-2">
+            <div class="text-sm font-bold mb-3 mr-1 opacity-90">体力状態</div>
             <div id="hp-value" class="text-6xl font-extrabold tracking-tighter"><%= @latest_status.hp_percentage %></div>
             <div class="text-xl font-bold mb-2">%</div>
           </div>
@@ -23,7 +24,7 @@
           <!-- 現在の様子 -->
           <div class="mb-3">
             <div class="inline-block bg-white/20 px-4 py-1.5 rounded-full text-sm font-bold backdrop-blur-sm">
-              現在の様子：<span id="mood-text"><%= @latest_status.mood&.name || '未設定' %></span>
+              様子：<span id="mood-text"><%= @latest_status.mood&.name || '未設定' %></span>
             </div>
           </div>
           
