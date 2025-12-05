@@ -21,7 +21,7 @@
 
 ## 4. 主な機能
 ### 🤖 AI相談機能（心臓部）
-![Image](https://github.com/user-attachments/assets/bf5166bb-325e-4e4e-b5d5-3401e71ae6d7)
+<img src="https://github.com/user-attachments/assets/bf5166bb-325e-4e4e-b5d5-3401e71ae6d7" width="300">
 - **LINE風チャットUI**: いつでもどこでも、ボトムナビから即座にAIに相談可能。
 - **ご機嫌度スコアリング**: 今の状況で妻の機嫌がどうなのか、0〜100点で採点。
 - **パートナー性格設定**: 「せっかち」「共感重視」など、パートナーの性格を登録することで、AIのアドバイスがパーソナライズされます。
