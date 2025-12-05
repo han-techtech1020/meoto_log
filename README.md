@@ -154,7 +154,7 @@ erDiagram
     }
 ```
 
-## 9 画面遷移図
+## 9. 画面遷移図
 ```mermaid
 graph TD
     User((ユーザー))
