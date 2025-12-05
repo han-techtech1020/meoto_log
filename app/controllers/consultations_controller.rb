@@ -81,7 +81,6 @@ class ConsultationsController < ApplicationController
     final_hp = (base_hp + mood_impact).clamp(0, 100)
 
     # 4. コンディション(mood_id)の自動選択
-    # 1:最高, 2:普通, 3:不機嫌, 4:激怒 と仮定
     estimated_mood_id = case mood_score
                         when 80..100 then 1 # 最高
                         when 60..79  then 2 # 良い
@@ -90,10 +89,15 @@ class ConsultationsController < ApplicationController
                         else              5 # 不機嫌
                         end
 
-    # 5. 保存
+    # 5. 周期目安
+    last_status = current_user.partner_statuses.last
+    current_cycle_id = last_status&.cycle_id # 直前の値を取得（なければnil）
+
+    # 6. 保存
     current_user.partner_statuses.create(
       hp_percentage: final_hp,
-      mood_id: estimated_mood_id
+      mood_id: estimated_mood_id,
+      cycle_id: current_cycle_id
     )
   end
 end
