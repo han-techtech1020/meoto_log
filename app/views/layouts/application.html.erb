@@ -122,7 +122,12 @@
 
       <!-- モーダル（相談画面） -->
     <div id="modal" class="fixed inset-0 bg-black/60 z-[100] hidden justify-center items-end backdrop-blur-sm" onclick="closeModal(event)">
-        <div class="bg-white w-full max-w-md mx-auto rounded-t-3xl p-6 shadow-2xl transform transition-transform" onclick="event.stopPropagation()">
+        <div class="bg-white w-full max-w-md mx-auto rounded-t-3xl p-6 shadow-2xl transform transition-transform relative" onclick="event.stopPropagation()">
+            <button type="button" onclick="closeModal('force')" class="absolute top-4 right-4 p-2 bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
             <!-- ハンドルバー -->
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
             
@@ -178,9 +183,14 @@
         }
 
         // モーダルを閉じる
-        function closeModal(event) {
-            if (event.target === document.getElementById('modal')) {
-                const modal = document.getElementById('modal');
+        window.closeModal = function(event) {
+            const modal = document.getElementById('modal');
+            
+            // 判定：'force'(ボタン) または 背景クリック なら閉じる
+            const isForce = event === 'force';
+            const isBackgroundClick = event && event.target === modal;
+
+            if (isForce || isBackgroundClick) {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 // リロード条件を整理 
