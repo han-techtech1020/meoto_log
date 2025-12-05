@@ -14,6 +14,6 @@ class PartnerStatusesController < ApplicationController
   private
 
   def partner_status_params
-    params.require(:partner_status).permit(:hp_percentage, :mood_id)
+    params.require(:partner_status).permit(:hp_percentage, :mood_id, :cycle_id)
   end
 end
