@@ -49,12 +49,24 @@
             </div>
 
             <!-- open-content: 開いた時（全部表示） -->
-            <div class="open-content hidden mt-3 bg-blue-50 p-3 rounded-lg border border-blue-100 animate-fade-in">
-              <div class="flex gap-2 mb-1">
-                <span class="text-lg">😌</span>
-                <span class="text-xs font-bold text-blue-600 mt-1">おすすめメッセージ</span>
+            <div class="open-content hidden mt-3 space-y-3 animate-fade-in">
+               <% if consultation.advice.present? %>
+                <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                  <div class="flex gap-2 mb-1">
+                    <span class="text-lg">💡</span>
+                    <span class="text-xs font-bold text-yellow-700 mt-1">アドバイス</span>
+                  </div>
+                  <div class="mt-1 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap text-left"><%= consultation.advice %></div>
+                </div>
+              <% end %>
+              
+              <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                <div class="flex gap-2 mb-1">
+                  <span class="text-lg">😌</span>
+                  <span class="text-xs font-bold text-blue-600 mt-1">おすすめメッセージ</span>
+                </div>
+                <div class="mt-1 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap text-left"><%= consultation.ai_response %></div>
               </div>
-              <div class="mt-2 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap text-left"><%= consultation.ai_response %></div>
             </div>
 
             <!-- 開閉インジケーター -->
