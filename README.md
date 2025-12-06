@@ -37,7 +37,7 @@
 
 ### 📝 ログ管理
 - **アコーディオンUI**: 過去の相談履歴を一覧表示し、タップで詳細を展開。
-- **フィルタリング**: スコアに応じて色分け（青：良好、赤：危険）され、直感的に振り返りが可能。
+- **振り返り機能**: スコアや模範解答だけでなく、**AIからの詳細なアドバイス（解説）も保存・閲覧可能**にし、過去の成功/失敗パターンを学習できるようにしました。
 
 ### ⚡️ ユーザー体験（UX）向上
 - **ゲストログイン機能**: メールアドレス登録なしで、ワンクリックで即座にアプリの全機能を試用可能。
@@ -89,12 +89,13 @@ AIへの相談後、ページをリロードすることなく**JavaScriptで即
 
 ### Consultations テーブル
 AIへの相談内容とフィードバックを保存。
-| Column      | Type       | Options     | Note               |
-| ----------- | ---------- | ----------- | ------------------ |
-| content     | text       | null: false | 相談内容           |
-| ai_response | text       | null: false | AIからのアドバイス |
-| risk_score  | integer    | null: false | ご機嫌度スコア     |
-| user        | references | null: false | 外部キー           |
+| Column      | Type       | Options     | Note                     |
+| ----------- | ---------- | ----------- | ------------------------ |
+| content     | text       | null: false | 相談内容                 |
+| ai_response | text       | null: false | AIからのアドバイス       |
+| advice      | text       |             | AIからの解説・アドバイス |
+| risk_score  | integer    | null: false | ご機嫌度スコア           |
+| user        | references | null: false | 外部キー                 |
 
 ### Partner_Statuses テーブル
 妻のHPや機嫌の状態を記録。
