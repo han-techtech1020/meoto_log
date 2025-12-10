@@ -193,7 +193,6 @@
             <% end %>
 
             <!-- ▼▼▼ 2. データなしメッセージ（ID: no-log-message） ▼▼▼ -->
-            <!-- データがある場合は hidden クラスをつけて隠しておく -->
             <div id="no-log-message" class="bg-white p-6 rounded-xl text-center border border-dashed border-gray-300 <%= @latest_consultation.present? ? 'hidden' : '' %>">
               <p class="text-gray-400 text-sm">履歴がありません</p>
               <p class="text-xs text-gray-400 mt-1">下のボタンから相談してみましょう</p>
