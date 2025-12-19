@@ -16,7 +16,7 @@ class OpenAiService
     # AIへの「役割」と「命令」を定義（ここがプロンプトエンジニアリング！）
     system_prompt = <<~TEXT
       あなたは夫婦関係の専門家であり、論理的なカウンセラーです。
-      #{personality_prompt}#{' '}
+      #{personality_prompt}
       ユーザー（夫）の悩みや発言に対して、以下の3つの要素を含むJSON形式で回答してください。
 
       1. advice: 妻の心理を解説し、夫がどう行動すべきかの具体的なアドバイス（150文字以内）
@@ -33,6 +33,7 @@ class OpenAiService
     TEXT
 
     response = @client.chat(
+      # ここでAIに送信する
       parameters: {
         model: 'gpt-4o-mini', # 最新の軽量モデル（安くて賢い）
         messages: [
